@@ -13,7 +13,11 @@ public:
 	{
 	}
 
+	~Ray()
+	{
+
+	}
+
 	vec4 origin;
 	vec3 direction;
-private:
 };
