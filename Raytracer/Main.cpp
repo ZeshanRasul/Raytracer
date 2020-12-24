@@ -58,7 +58,8 @@ Ray ShootRay(Camera cam, int i, int j, int width, int height)
 	vec3 v = cross(w, u);
 
 	// Create new ray
-	float alpha = (tan(1 / 2) * ((float(i) - (float(width) / 2)) / (float(width) / 2)));
+	float fovX = 2 * (1 / tan(cam.fovY / -2));
+	float alpha = (tan(fovX / 2) * ((float(i) - (float(width) / 2)) / (float(width) / 2)));
 	float beta = tan(cam.fovY / 2) * (((float(height) / 2) - float(j)) / (float(height) / 2));
 
 	vec3 direction = normalize((alpha * u) + (beta * v) - w);
@@ -73,7 +74,8 @@ Ray ShootRay(Camera cam, int i, int j, int width, int height)
 float CheckSphereIntersection(Sphere sphere, Ray ray, Camera camera)
 {
 
-	vec4 newCenter = lookAt(camera.eyePos, camera.center, camera.up) * sphere.center;
+	//vec4 newCenter = lookAt(camera.eyePos, camera.center, camera.up) * sphere.center;
+	vec4 newCenter = sphere.center;
 
 	//float t = -(dot(ray.direction, (ray.origin - sphere.center))) + sqrt(((dot(ray.direction, (ray.origin - sphere.center))) * (dot(ray.direction, (ray.origin - sphere.center)))) - ((normalize(ray.origin - sphere.center) * normalize(ray.origin - sphere.center)) - (sphere.radius * sphere.radius)));
 
@@ -87,14 +89,14 @@ float CheckSphereIntersection(Sphere sphere, Ray ray, Camera camera)
 	// If complex roots no intersection
 	
 	float a = dot(ray.direction, ray.direction);
-	float b = 2 * (dot(ray.direction, (ray.origin - sphere.center)));
-	float c = dot((ray.origin - sphere.center), (ray.origin - sphere.center)) - (sphere.radius * sphere.radius);
+	float b = 2 * (dot(ray.direction, (ray.origin - newCenter)));
+	float c = dot((ray.origin - newCenter), (ray.origin - newCenter)) - (sphere.radius * sphere.radius);
 
 	float returnVal;
 	int roots = 0;
 
 //	float discriminant = (b * b) - (4 * a * c);
-	float discriminant = (dot(ray.direction, (ray.origin - sphere.center))) * (dot(ray.direction, (ray.origin - sphere.center))) - ((dot(ray.origin - sphere.center, ray.origin - sphere.center)) - (sphere.radius * sphere.radius));
+	float discriminant = (dot(ray.direction, (ray.origin - newCenter))) * (dot(ray.direction, (ray.origin - newCenter))) - ((dot(ray.origin - newCenter, ray.origin - newCenter)) - (sphere.radius * sphere.radius));
 	if (discriminant < 0)
 	{
 		return INFINITY;
@@ -231,7 +233,7 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	Sphere sphere0(vec4(0, 0, 0, 1), 0.2f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
+	Sphere sphere0(vec4(0.1, 0.1, 0.1, 1), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
 	//Create Triangle here
 	scene.spheres.push_back(sphere0);
 
