@@ -102,7 +102,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	float minDist = INFINITY;
 	//Object hitObject;
 	bool didHit = false;
-	float t;
+	float t = minDist;
 	vec3 hitObjectDiffuse = vec3(0, 0, 0);
 	vec3 hitObjectSpecular = vec3(0, 0, 0);
 	vec3 hitObjectEmission = vec3(0, 0, 0);
@@ -120,6 +120,8 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectSpecular = scene.spheres[i].specular;
 			hitObjectEmission = scene.spheres[i].emission;
 			hitObjectShininess = scene.spheres[i].shininess;
+			
+			minDist = t;
 		}
 	}
 
@@ -136,11 +138,16 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess);
 }
 
+vec3 FindColour(Intersection intersection)
+{
+	return intersection.hitObjectDiffuse;
+}
+
 int main()
 {
 	const int width = 128;
 	const int height = 128;
-	unsigned char pixels[width * height * 3] = { 0 };
+	unsigned char* pixels[width][height][3];
 	std::string outputFilename = "Raytracer.png";
 
 	vec3 eyePosition = vec3(0, 0, 4);
@@ -153,7 +160,7 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	Sphere sphere0(vec4(0, 0, 0, 1), 0.666, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f);
+	Sphere sphere0(vec4(0, 0, 0, 1), 0.03, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f);
 	//Create Triangle here
 
 	scene.spheres.push_back(sphere0);
@@ -165,11 +172,20 @@ int main()
 			// Shoot Ray
 			Ray ray = ShootRay(camera, i, j, width, height);
 			Intersection intersection = FindIntersection(scene, ray);
+			vec3 colour = FindColour(intersection);
+			unsigned char col[3] = { colour[0], colour[1], colour[2] };
+			//memcpy(&pixels[i][j], &colour, 24);
+			if (colour != vec3(0, 0, 0))
+			{
+				pixels[i][j][0] = &col[0];
+				pixels[i][j][1] = &col[1];
+				pixels[i][j][2] = &col[2];
+			}
 		}
 	}
 
 
 	FreeImage_Initialise();
-	FIBITMAP* img = FreeImage_ConvertFromRawBits(pixels, width, height, 3 * width, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
+	FIBITMAP* img = FreeImage_ConvertFromRawBits((BYTE*)pixels, width, height, 3 * width, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
 	FreeImage_Save(FIF_PNG, img, outputFilename.c_str(), 0);
 }
