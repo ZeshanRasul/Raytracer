@@ -11,14 +11,16 @@ public:
 				 vec3 hitObjectDiffuse, 
 				 vec3 hitObjectSpecular,
 				 vec3 hitObjectEmission,
-				 float hitObjectShininess)
+				 float hitObjectShininess,
+				 vec3 hitObjectAmbient)
 		:
 		didHit(didHit),
 		intersectionPoint(intersectionPoint),
 		hitObjectDiffuse(hitObjectDiffuse),
 		hitObjectSpecular(hitObjectSpecular),
 		hitObjectEmission(hitObjectEmission),
-		hitObjectShininess(hitObjectShininess)
+		hitObjectShininess(hitObjectShininess),
+		hitObjectAmbient(hitObjectAmbient)
 	{		
 	}
 
@@ -26,10 +28,11 @@ public:
 	{
 	}
 
-	bool didHit;
+	bool didHit = false;
 	vec4 intersectionPoint;
 	vec3 hitObjectDiffuse;
 	vec3 hitObjectSpecular;
 	vec3 hitObjectEmission;
+	vec3 hitObjectAmbient;
 	float hitObjectShininess;
 };

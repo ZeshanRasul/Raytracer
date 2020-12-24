@@ -7,14 +7,15 @@ using namespace glm;
 class Sphere : public Object
 {
 public:
-	Sphere(vec4 center, float radius, vec3 diffuse, vec3 specular, vec3 emission, float shininess)
+	Sphere(vec4 center, float radius, vec3 diffuse, vec3 specular, vec3 emission, float shininess, vec3 ambient)
 		:
 		center(center),
 		radius(radius),
 		diffuse(diffuse),
 		specular(specular),
 		emission(emission),
-		shininess(shininess)
+		shininess(shininess),
+		ambient(ambient)
 	{}
 	
 	~Sphere()
@@ -23,6 +24,6 @@ public:
 	vec4 center;
 	float radius;
 	vec3 normal;
-	vec3 diffuse, specular, emission;
+	vec3 diffuse, specular, emission, ambient;
 	float shininess;
 };
