@@ -37,6 +37,58 @@ float CheckSphereIntersection(Sphere sphere, Ray ray)
 	// If both roots the same tangent 
 	// If 1 positive 1 negative choose positive
 	// If complex roots no intersection
+	float a = dot(ray.direction, ray.direction);
+	float b = 2 * (dot(ray.direction, (ray.origin - sphere.center)));
+	float c = dot((ray.origin - sphere.center), (ray.origin - sphere.center)) - (sphere.radius * sphere.radius);
+
+	float returnVal;
+	int roots;
+
+	float discriminant = (b * b) - (4 * a * c);
+	if (discriminant < 0)
+	{
+		return 0.0f;
+	} 
+	else if (discriminant > 0)
+	{
+		roots = 2;
+	}
+
+	if (roots == 2)
+	{
+		float t = (-b + sqrt(((b * b) - (4 * a * c))) / (2 * a));
+		float t1 = (-b - sqrt(((b * b) - (4 * a * c))) / (2 * a));
+
+		if (t > 0 && t1 > 0)
+		{
+			t < t1 ?  returnVal = t : returnVal = t1;
+		}
+
+		if (t > 0 && t1 < 0)
+		{
+			returnVal = t;
+		}
+
+		if (t < 0 && t1 > 0)
+		{
+			returnVal = t1;
+		}
+
+		vec4 intersecPoint = ray.origin + (ray.direction * returnVal);
+		sphere.normal = normalize(intersecPoint - sphere.center);
+
+		return returnVal;
+	} 
+	else if (roots == 1)
+	{
+		float t = (-b + sqrt(((b * b) - (4 * a * c))) / (2 * a));
+		returnVal = t;
+
+		vec4 intersecPoint = ray.origin + (ray.direction * returnVal);
+		sphere.normal = normalize(intersecPoint - sphere.center);
+
+		return returnVal;
+	}
 
 }
 
@@ -48,11 +100,13 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	// return closest intersection
 	
 	float minDist = INFINITY;
-	Object hitObject;
+	//Object hitObject;
 	bool didHit = false;
 	float t;
-	vec3 hitObjectDiffuse, hitObjectSpecular, hitObjectEmission;
-	float hitObjectShininess;
+	vec3 hitObjectDiffuse = vec3(0, 0, 0);
+	vec3 hitObjectSpecular = vec3(0, 0, 0);
+	vec3 hitObjectEmission = vec3(0, 0, 0);
+	float hitObjectShininess = 0.0f;
 
 
 	for (int i = 0; i < scene.spheres.size(); i++)
@@ -61,7 +115,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 
 		if (t < minDist && t > 0)
 		{
-			hitObject = scene.spheres[i];
+		//	hitObject = scene.spheres[i];
 			hitObjectDiffuse = scene.spheres[i].diffuse;
 			hitObjectSpecular = scene.spheres[i].specular;
 			hitObjectEmission = scene.spheres[i].emission;
@@ -109,7 +163,8 @@ int main()
 		for (int j = 0; j < height; j++)
 		{
 			// Shoot Ray
-			ShootRay(camera, i, j, width, height);
+			Ray ray = ShootRay(camera, i, j, width, height);
+			Intersection intersection = FindIntersection(scene, ray);
 		}
 	}
 

@@ -22,6 +22,7 @@ public:
 
 	vec4 center;
 	float radius;
+	vec3 normal;
 	vec3 diffuse, specular, emission;
 	float shininess;
 };
