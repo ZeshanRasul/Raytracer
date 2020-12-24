@@ -250,7 +250,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 Ray ShootShadowRay(Intersection intersection, Light light)
 {
 
-	vec3 direction = light.position - intersection.intersectionPoint;
+	vec3 direction = intersection.intersectionPoint - light.position;
 	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
 
 	Ray ray(origin, direction);
@@ -316,12 +316,16 @@ int main()
 	Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
 	scene.spheres.push_back(sphere0);
 
-	
+	Sphere sphere1(vec3(0.5, 0.5, 0), 0.5f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
+	scene.spheres.push_back(sphere1);
 
 	Triangle triangle0(vec3(-0.33, 0.33, 1), vec3(0.33, -0.33, 1), vec3(0.33, 0.33, 1), vec3(0.0f, 0.27f, 0.619f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.0f, 0.33f, 0.33f));
 	scene.triangles.push_back(triangle0);
 
-	Light light0(vec3(0, 0, 4), vec3(0.5f, 0.5f, 0.5f));
+	Triangle triangle1(vec3(+0.33, -0.33, 1), vec3(-0.33, 0.33, 1), vec3(-0.33, -0.33, 1), vec3(0.0f, 0.27f, 0.619f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.0f, 0.33f, 0.33f));
+	scene.triangles.push_back(triangle1);
+
+	Light light0(vec3(4, 0, 4), vec3(0.5f, 0.5f, 0.5f));
 	scene.lights.push_back(light0);
 
 	for (int i = 0; i < width; i++)
