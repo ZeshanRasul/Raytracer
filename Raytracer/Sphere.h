@@ -21,6 +21,11 @@ public:
 	~Sphere()
 	{};
 
+	void SetNormal(vec3 newNormal)
+	{
+		normal = newNormal;
+	}
+
 	vec3 center;
 	float radius;
 	vec3 normal;

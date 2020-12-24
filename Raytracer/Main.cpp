@@ -134,7 +134,7 @@ float CheckSphereIntersection(Sphere sphere, Ray ray)
 		}
 
 		vec3 intersecPoint = ray.origin + (ray.direction * returnVal);
-		sphere.normal = normalize(intersecPoint - newCenter);
+		sphere.SetNormal(normalize(intersecPoint - sphere.center));
 
 		return returnVal;
 	} 
@@ -144,7 +144,7 @@ float CheckSphereIntersection(Sphere sphere, Ray ray)
 		returnVal = t;
 
 		vec3 intersecPoint = ray.origin + (ray.direction * returnVal);
-		sphere.normal = normalize(intersecPoint - sphere.center);
+		sphere.SetNormal(normalize(intersecPoint - sphere.center));
 
 		return returnVal;
 	}
@@ -210,7 +210,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectEmission = scene.spheres[i].emission;
 			hitObjectAmbient = scene.spheres[i].ambient;
 			hitObjectShininess = scene.spheres[i].shininess;
-			hitObjectNormal = scene.spheres[i].normal;
+			hitObjectNormal = normalize((ray.origin + ray.direction * t) - scene.spheres[i].center);
 
 			minDist = t;
 			didHit = true;
@@ -233,7 +233,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectEmission = scene.triangles[i].emission;
 			hitObjectAmbient = scene.triangles[i].ambient;
 			hitObjectShininess = scene.triangles[i].shininess;
-			hitObjectNormal = scene.triangles[i].normal;
+			hitObjectNormal = normalize(cross((scene.triangles[i].vertex2 - scene.triangles[i].vertex0), (scene.triangles[i].vertex1 - scene.triangles[i].vertex0)));
 
 			minDist = t;
 			didHit = true;
@@ -276,7 +276,8 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 {
 	if (intersection.didHit == true)
 	{
-		vec3 finalColour;
+		vec3 finalColour(0,0,0);
+		vec3 computedColour;
 		for (int i = 0; i < scene.lights.size(); i++)
 		{
 			Ray ray = ShootShadowRay(intersection, scene.lights[i]);
@@ -284,11 +285,11 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 			if (shadowIntersection.didHit == false)
 			{
 				vec3 colour = ComputeLighting(intersection, scene.lights[i], camera);
-				finalColour = finalColour + colour;
+				finalColour += colour;
 			}
 		}
 
-		return finalColour = intersection.hitObjectAmbient + intersection.hitObjectEmission;
+		return finalColour = finalColour + intersection.hitObjectAmbient + intersection.hitObjectEmission;
 	}
 	else
 	{
@@ -303,7 +304,7 @@ int main()
 	unsigned char pixels[width * height * 3] = { 0 };
 	std::string outputFilename = "Raytracer.png";
 
-	vec3 eyePosition = vec3(0, 0, -1);
+	vec3 eyePosition = vec3(0, 2, -2);
 	vec3 center = vec3(0, 0, 0);
 	vec3 up = vec3(0, 1, 0);
 	float fovY = radians(45.0f);
@@ -316,7 +317,7 @@ int main()
 	Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
 	scene.spheres.push_back(sphere0);
 
-	Sphere sphere1(vec3(0.5, 0.5, 0), 0.5f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
+	Sphere sphere1(vec3(0.5, 0.5, 0.75f), 0.5f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
 	scene.spheres.push_back(sphere1);
 
 	Triangle triangle0(vec3(-0.33, 0.33, 1), vec3(0.33, -0.33, 1), vec3(0.33, 0.33, 1), vec3(0.0f, 0.27f, 0.619f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.0f, 0.33f, 0.33f));
@@ -327,6 +328,9 @@ int main()
 
 	Light light0(vec3(4, 0, 4), vec3(0.5f, 0.5f, 0.5f));
 	scene.lights.push_back(light0);
+	
+	Light light1(vec3(0, 0, -1), vec3(0.0f, 0.5f, 0.7f));
+	scene.lights.push_back(light1);
 
 	for (int i = 0; i < width; i++)
 	{
