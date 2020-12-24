@@ -58,8 +58,8 @@ Ray ShootRay(Camera cam, int i, int j, int width, int height)
 	vec3 v = cross(w, u);
 
 	// Create new ray
-	float alpha = float(tan(1 / 2) * ((i - (width / 2)) / (width / 2)));
-	float beta = tan(cam.fovY / 2) * (((height / 2) - j) / (height / 2));
+	float alpha = (tan(1 / 2) * ((float(i) - (float(width) / 2)) / (float(width) / 2)));
+	float beta = tan(cam.fovY / 2) * (((float(height) / 2) - float(j)) / (float(height) / 2));
 
 	vec3 direction = normalize((alpha * u) + (beta * v) - w);
 	vec3 origin = cam.eyePos;
@@ -231,7 +231,7 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	Sphere sphere0(vec4(0, 0, 0, 1), 0.5f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
+	Sphere sphere0(vec4(0, 0, 0, 1), 0.2f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
 	//Create Triangle here
 	scene.spheres.push_back(sphere0);
 
