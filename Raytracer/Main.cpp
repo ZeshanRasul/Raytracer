@@ -6,6 +6,47 @@
 #include "Scene.h"
 #include "Sphere.h"
 #include "Triangle.h"
+#include <vector>
+
+std::vector <mat4> modelViewStack;
+
+void pushMatrix(mat4 mat)
+{
+	modelViewStack.push_back(mat);
+}
+
+void popMatrix(mat4& mat)
+{
+	if (modelViewStack.size())
+	{
+		mat = modelViewStack.back();
+		modelViewStack.pop_back();
+	}
+	else
+	{
+		mat = mat4(1.0);
+	}
+}
+
+mat4 lookAt(const vec3& eye, const vec3& center, const vec3& up)
+{
+	vec3 a = eye - center;
+	vec3 w = normalize(a);
+
+	vec3 crossUpW = glm::cross(up, w);
+	vec3 u = glm::normalize(crossUpW);
+	//u = -u;
+	vec3 v = cross(w, u);
+
+	mat4 lookAtMatrix = mat4(u.x, u.y, u.z, -glm::dot(u, eye),
+							 v.x, v.y, v.z, -glm::dot(v, eye),
+							 w.x, w.y, w.z, -glm::dot(w, eye),
+							 0, 0, 0, 1);
+
+	return glm::transpose(lookAtMatrix);
+
+}
+
 
 Ray ShootRay(Camera cam, int i, int j, int width, int height)
 {
@@ -42,7 +83,7 @@ float CheckSphereIntersection(Sphere sphere, Ray ray)
 	float c = dot((ray.origin - sphere.center), (ray.origin - sphere.center)) - (sphere.radius * sphere.radius);
 
 	float returnVal;
-	int roots;
+	int roots = 0;
 
 	float discriminant = (b * b) - (4 * a * c);
 	if (discriminant < 0)
@@ -145,7 +186,7 @@ int main()
 {
 	const int width = 128;
 	const int height = 128;
-	unsigned char pixels[width * height *3] = { 0 };
+	unsigned char pixels[width * height * 3] = { 0 };
 	std::string outputFilename = "Raytracer.png";
 
 	vec3 eyePosition = vec3(0, 0, 4);
@@ -158,9 +199,8 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	Sphere sphere0(vec4(0, 0, 0, 1), 0.03, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f);
+	Sphere sphere0(vec4(0, 0, 0, 1), 0.1f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f);
 	//Create Triangle here
-
 	scene.spheres.push_back(sphere0);
 
 	for (int i = 0; i < width; i++)
@@ -175,21 +215,12 @@ int main()
 			col[0] = colour[0] * 255;
 			col[1] = colour[1] * 255;
 			col[2] = colour[2] * 255;
-			memcpy(&pixels[i * j * 3], &col, 3);
-			
-			/*
-			if (colour != vec3(0, 0, 0))
-			{
-				pixels[i * j * 3] = &col[0];
-				pixels[i * j * 3 + 1] = &col[1];
-				pixels[i * j * 3 + 2] = &col[2];
-			}
-			*/
+			memcpy(&pixels[((j * width) + i)  * 3], &col, 3);
 		}
 	}
-
 
 	FreeImage_Initialise();
 	FIBITMAP* img = FreeImage_ConvertFromRawBits((BYTE*)pixels, width, height, 3 * width, 24, 0xFF0000, 0x00FF00, 0x0000FF, false);
 	FreeImage_Save(FIF_PNG, img, outputFilename.c_str(), 0);
+	FreeImage_DeInitialise();
 }
