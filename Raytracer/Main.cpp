@@ -58,7 +58,8 @@ Ray ShootRay(Camera cam, int i, int j, int width, int height)
 	vec3 v = cross(w, u);
 
 	// Create new ray
-	float fovX = 2 * (1 / tan(cam.fovY / -2));
+//	float fovX = 2 * (1 / tan(cam.fovY / -2));
+	float fovX = 2 * -1 * tan(cam.fovY / 2);
 	float alpha = (tan(fovX / 2) * ((float(i) - (float(width) / 2)) / (float(width) / 2)));
 	float beta = tan(cam.fovY / 2) * (((float(height) / 2) - float(j)) / (float(height) / 2));
 
