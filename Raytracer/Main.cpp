@@ -282,11 +282,11 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
-	scene.spheres.push_back(sphere0);
+	//Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
+	//scene.spheres.push_back(sphere0);
 	
-	//Triangle triangle0(vec3(0, -0.36, 0), vec3(-0.18, 0, 0), vec3(0.18, 0, 0), vec3(1.0f, 0.0f, 0.0f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(1.0f, 0.0f, 0.0f));
-	//scene.triangles.push_back(triangle0);
+	Triangle triangle0(vec3(-0.33, 0.33, -0), vec3(0.33, -0.33, 0), vec3(0.33, 0.33, 0), vec3(1.0f, 0.0f, 0.0f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(1.0f, 0.0f, 0.0f));
+	scene.triangles.push_back(triangle0);
 
 	for (int i = 0; i < width; i++)
 	{
