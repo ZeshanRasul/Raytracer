@@ -59,9 +59,9 @@ Ray ShootRay(Camera cam, int i, int j, int width, int height)
 
 	// Create new ray
 //	float fovX = 2 * (1 / tan(cam.fovY / -2));
-	float fovX = 2 * cam.eyePos.z * tan(cam.fovY / 2);
-	float alpha = (tan(fovX / 2) * ((float(i) - (float(width) / 2)) / (float(width) / 2)));
-	float beta = tan(cam.fovY / 2) * (((float(height) / 2) - float(j)) / (float(height) / 2));
+	float fovX = 2 * atan((height * tan(cam.fovY/ 2)) / width);
+	float alpha = (tan(cam.fovY / 2) * ((float(i) - (float(width) / 2)) / (float(width) / 2)));
+	float beta = tan(fovX / 2) * (((float(height) / 2) - float(j)) / (float(height) / 2));
 
 	vec3 direction = normalize((alpha * u) + (beta * v) - w);
 	vec3 origin = cam.eyePos;
@@ -267,8 +267,8 @@ vec3 FindColour(Intersection intersection)
 
 int main()
 {
-	const int width = 128;
-	const int height = 128;
+	const int width = 160;
+	const int height = 120;
 	unsigned char pixels[width * height * 3] = { 0 };
 	std::string outputFilename = "Raytracer.png";
 
@@ -282,11 +282,11 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	//Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
-	//scene.spheres.push_back(sphere0);
+	Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
+	scene.spheres.push_back(sphere0);
 	
-	Triangle triangle0(vec3(0, -0.36, 0), vec3(-0.18, 0, 0), vec3(0.18, 0, 0), vec3(1.0f, 0.0f, 0.0f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(1.0f, 0.0f, 0.0f));
-	scene.triangles.push_back(triangle0);
+	//Triangle triangle0(vec3(0, -0.36, 0), vec3(-0.18, 0, 0), vec3(0.18, 0, 0), vec3(1.0f, 0.0f, 0.0f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(1.0f, 0.0f, 0.0f));
+	//scene.triangles.push_back(triangle0);
 
 	for (int i = 0; i < width; i++)
 	{
