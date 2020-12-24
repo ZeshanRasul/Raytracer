@@ -30,13 +30,56 @@ Ray ShootRay(Camera cam, int i, int j, int width, int height)
 
 }
 
-/*Intersection*/ void FindIntersection(/*Scene scene,*/ Ray ray)
+float CheckSphereIntersection(Sphere sphere, Ray ray)
+{
+	// Check discriminant
+	// If 2 positive roots take smaller
+	// If both roots the same tangent 
+	// If 1 positive 1 negative choose positive
+	// If complex roots no intersection
+
+}
+
+Intersection FindIntersection(Scene scene, Ray ray)
 {
 	// For each sphere in scene and for each triangle in scene
 	// i < scene->spheres.length() test for intersection
 	// call sphereIntersection and triangleIntersection respectively
 	// return closest intersection
-	//return Intersection();
+	
+	float minDist = INFINITY;
+	Object hitObject;
+	bool didHit = false;
+	float t;
+	vec3 hitObjectDiffuse, hitObjectSpecular, hitObjectEmission;
+	float hitObjectShininess;
+
+
+	for (int i = 0; i < scene.spheres.size(); i++)
+	{
+		t = CheckSphereIntersection(scene.spheres[i], ray);
+
+		if (t < minDist && t > 0)
+		{
+			hitObject = scene.spheres[i];
+			hitObjectDiffuse = scene.spheres[i].diffuse;
+			hitObjectSpecular = scene.spheres[i].specular;
+			hitObjectEmission = scene.spheres[i].emission;
+			hitObjectShininess = scene.spheres[i].shininess;
+		}
+	}
+
+	// Same loop as above for triangles
+	
+	if (minDist < INFINITY)
+	{
+		didHit = true;
+	}
+
+	// Calculate intersection point
+	vec4 intersectionPoint = ray.origin + ray.direction * t;
+
+	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess);
 }
 
 int main()
@@ -56,7 +99,7 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	Sphere sphere0(vec3(0, 0, 0), 0.666, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f);
+	Sphere sphere0(vec4(0, 0, 0, 1), 0.666, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f);
 	//Create Triangle here
 
 	scene.spheres.push_back(sphere0);
@@ -69,8 +112,6 @@ int main()
 			ShootRay(camera, i, j, width, height);
 		}
 	}
-
-
 
 
 	FreeImage_Initialise();

@@ -1,12 +1,13 @@
 #pragma once
 #include "glm/glm.hpp"
+#include "Object.h"
 
 using namespace glm;
 
-class Sphere
+class Sphere : public Object
 {
 public:
-	Sphere(vec3 center, float radius, vec3 diffuse, vec3 specular, vec3 emission, float shininess)
+	Sphere(vec4 center, float radius, vec3 diffuse, vec3 specular, vec3 emission, float shininess)
 		:
 		center(center),
 		radius(radius),
@@ -19,7 +20,7 @@ public:
 	~Sphere()
 	{};
 
-	vec3 center;
+	vec4 center;
 	float radius;
 	vec3 diffuse, specular, emission;
 	float shininess;

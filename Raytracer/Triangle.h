@@ -1,9 +1,10 @@
 #pragma once
 #include "glm/glm.hpp"
+#include "Object.h"
 
 using namespace glm;
 
-class Triangle
+class Triangle : public Object
 {
 public:
 	Triangle(vec3 vertex0, vec3 vertex1, vec3 vertex2, vec3 diffuse, vec3 specular, vec3 emission, float shininess)

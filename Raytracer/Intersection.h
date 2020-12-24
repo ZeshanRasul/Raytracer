@@ -8,7 +8,6 @@ class Intersection
 public:
 	Intersection(bool didHit, 
 				 vec4 intersectionPoint, 
-				 vec3 hitObjectAmbient, 
 				 vec3 hitObjectDiffuse, 
 				 vec3 hitObjectSpecular,
 				 vec3 hitObjectEmission,
@@ -16,7 +15,6 @@ public:
 		:
 		didHit(didHit),
 		intersectionPoint(intersectionPoint),
-		hitObjectAmbient(hitObjectAmbient),
 		hitObjectDiffuse(hitObjectDiffuse),
 		hitObjectSpecular(hitObjectSpecular),
 		hitObjectEmission(hitObjectEmission),
@@ -30,7 +28,6 @@ public:
 
 	bool didHit;
 	vec4 intersectionPoint;
-	vec3 hitObjectAmbient;
 	vec3 hitObjectDiffuse;
 	vec3 hitObjectSpecular;
 	vec3 hitObjectEmission;
