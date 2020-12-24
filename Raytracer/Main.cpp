@@ -216,11 +216,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			didHit = true;
 
 		}
-		if (t > minDist)
-		{
-			didHit = false;
-		}
-		
+	
 	}
 
 	// Same loop as above for triangles
@@ -242,11 +238,6 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			minDist = t;
 			didHit = true;
 
-		}
-
-		if (t > minDist)
-		{
-			didHit = false;
 		}
 	}
 
@@ -278,14 +269,14 @@ vec3 ComputeLighting(Intersection intersection, Light light, Camera camera)
 	float nDotH = dot(intersection.hitObjectNormal, halfVec);
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
-	return finalColour = intersection.hitObjectAmbient + intersection.hitObjectEmission + lambert + phong;
+	return finalColour = lambert + phong;
 }
 
 vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 {
 	if (intersection.didHit == true)
 	{
-		vec3 finalColour(0, 0, 0);
+		vec3 finalColour;
 		for (int i = 0; i < scene.lights.size(); i++)
 		{
 			Ray ray = ShootShadowRay(intersection, scene.lights[i]);
@@ -297,7 +288,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 			}
 		}
 
-		return finalColour;
+		return finalColour = intersection.hitObjectAmbient + intersection.hitObjectEmission;
 	}
 	else
 	{
@@ -330,7 +321,7 @@ int main()
 	Triangle triangle0(vec3(-0.33, 0.33, 1), vec3(0.33, -0.33, 1), vec3(0.33, 0.33, 1), vec3(0.0f, 0.27f, 0.619f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.0f, 0.33f, 0.33f));
 	scene.triangles.push_back(triangle0);
 
-	Light light0(vec3(4, 4, 4), vec3(0.5f, 0.5f, 0.5f));
+	Light light0(vec3(0, 0, 4), vec3(0.5f, 0.5f, 0.5f));
 	scene.lights.push_back(light0);
 
 	for (int i = 0; i < width; i++)
