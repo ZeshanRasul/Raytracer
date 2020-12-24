@@ -7,7 +7,7 @@ class Intersection
 {
 public:
 	Intersection(bool didHit, 
-				 vec4 intersectionPoint, 
+				 vec3 intersectionPoint, 
 				 vec3 hitObjectDiffuse, 
 				 vec3 hitObjectSpecular,
 				 vec3 hitObjectEmission,
@@ -29,7 +29,7 @@ public:
 	}
 
 	bool didHit = false;
-	vec4 intersectionPoint;
+	vec3 intersectionPoint;
 	vec3 hitObjectDiffuse;
 	vec3 hitObjectSpecular;
 	vec3 hitObjectEmission;

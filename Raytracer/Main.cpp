@@ -65,7 +65,7 @@ Ray ShootRay(Camera cam, int i, int j, int width, int height)
 
 	vec3 direction = normalize((alpha * u) + (beta * v) - w);
 	vec3 origin = cam.eyePos;
-	Ray ray(vec4(origin, 1), vec4(direction, 0));
+	Ray ray(origin, direction);
 
 	// Return ray
 	return ray;
@@ -76,7 +76,7 @@ float CheckSphereIntersection(Sphere sphere, Ray ray, Camera camera)
 {
 
 	//vec4 newCenter = lookAt(camera.eyePos, camera.center, camera.up) * sphere.center;
-	vec4 newCenter = sphere.center;
+	vec3 newCenter = sphere.center;
 
 	//float t = -(dot(ray.direction, (ray.origin - sphere.center))) + sqrt(((dot(ray.direction, (ray.origin - sphere.center))) * (dot(ray.direction, (ray.origin - sphere.center)))) - ((normalize(ray.origin - sphere.center) * normalize(ray.origin - sphere.center)) - (sphere.radius * sphere.radius)));
 
@@ -133,7 +133,7 @@ float CheckSphereIntersection(Sphere sphere, Ray ray, Camera camera)
 			returnVal = t1;
 		}
 
-		vec4 intersecPoint = ray.origin + (ray.direction * returnVal);
+		vec3 intersecPoint = ray.origin + (ray.direction * returnVal);
 		sphere.normal = normalize(intersecPoint - newCenter);
 
 		return returnVal;
@@ -143,7 +143,7 @@ float CheckSphereIntersection(Sphere sphere, Ray ray, Camera camera)
 		float t = -(dot(ray.direction, (ray.origin - sphere.center))) + sqrt(((dot(ray.direction, (ray.origin - sphere.center))) * (dot(ray.direction, (ray.origin - sphere.center)))) - (dot(ray.origin - sphere.center, ray.origin - sphere.center)) - (sphere.radius * sphere.radius));
 		returnVal = t;
 
-		vec4 intersecPoint = ray.origin + (ray.direction * returnVal);
+		vec3 intersecPoint = ray.origin + (ray.direction * returnVal);
 		sphere.normal = normalize(intersecPoint - sphere.center);
 
 		return returnVal;
@@ -152,6 +152,31 @@ float CheckSphereIntersection(Sphere sphere, Ray ray, Camera camera)
 	return INFINITY;
 
 
+}
+
+float CheckTriangleIntersection(Triangle triangle, Ray ray)
+{
+	// Find plane normal
+	triangle.normal = normalize(cross((triangle.vertex2 - triangle.vertex0), (triangle.vertex1 - triangle.vertex0)));
+
+	// Find point on Ray Plane intersection
+	float t = (dot(triangle.vertex0, triangle.normal) - dot(ray.origin, triangle.normal)) / dot(ray.direction, triangle.normal);
+	
+	// Check if point of Ray Plane intersection is within triangle
+	vec3 c = (triangle.vertex1 - triangle.vertex0);
+	vec3 b = (triangle.vertex2 - triangle.vertex0);
+	vec3 h = ((ray.origin + (ray.direction * t)) - triangle.vertex0);
+
+	float beta = ((b.x * h.y) - (b.y * h.x)) / ((b.x * c.y) - (b.y * c.x));
+	float gamma = ((h.x * c.y) - (h.y * c.x)) / ((b.x * c.y) - (b.y * c.x));
+
+	if (beta < 0 || gamma < 0 || beta + gamma > 1)
+	{
+		t = INFINITY;
+		return t;
+	}
+
+	return t;
 }
 
 Intersection FindIntersection(Scene scene, Ray ray, Camera camera)
@@ -198,9 +223,32 @@ Intersection FindIntersection(Scene scene, Ray ray, Camera camera)
 
 	// Same loop as above for triangles
 	
+	for (int i = 0; i < scene.triangles.size(); i++)
+	{
+		t = CheckTriangleIntersection(scene.triangles[i], ray);
+
+		if (t < minDist && t > 0)
+		{
+			//	hitObject = scene.spheres[i];
+			hitObjectDiffuse = scene.triangles[i].diffuse;
+			hitObjectSpecular = scene.triangles[i].specular;
+			hitObjectEmission = scene.triangles[i].emission;
+			hitObjectAmbient = scene.triangles[i].ambient;
+			hitObjectShininess = scene.triangles[i].shininess;
+
+			minDist = t;
+			didHit = true;
+
+		}
+
+		if (t > minDist)
+		{
+			didHit = false;
+		}
+	}
 
 	// Calculate intersection point
-	vec4 intersectionPoint = ray.origin + ray.direction * t;
+	vec3 intersectionPoint = ray.origin + ray.direction * t;
 
 	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient);
 }
@@ -234,9 +282,11 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	Sphere sphere0(vec4(0, 0, 0, 1), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
-	//Create Triangle here
-	scene.spheres.push_back(sphere0);
+	//Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
+	//scene.spheres.push_back(sphere0);
+	
+	Triangle triangle0(vec3(0, -0.36, 0), vec3(-0.18, 0, 0), vec3(0.18, 0, 0), vec3(1.0f, 0.0f, 0.0f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(1.0f, 0.0f, 0.0f));
+	scene.triangles.push_back(triangle0);
 
 	for (int i = 0; i < width; i++)
 	{

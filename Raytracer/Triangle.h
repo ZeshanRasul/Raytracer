@@ -20,6 +20,7 @@ public:
 	{}
 
 	vec3 vertex0, vertex1, vertex2;
+	vec3 normal;
 	vec3 diffuse, specular, emission, ambient;
 	float shininess;
 
