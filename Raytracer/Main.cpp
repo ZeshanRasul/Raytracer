@@ -122,15 +122,13 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectShininess = scene.spheres[i].shininess;
 			
 			minDist = t;
+			didHit = true;
+
 		}
 	}
 
 	// Same loop as above for triangles
 	
-	if (minDist < INFINITY)
-	{
-		didHit = true;
-	}
 
 	// Calculate intersection point
 	vec4 intersectionPoint = ray.origin + ray.direction * t;
@@ -147,7 +145,7 @@ int main()
 {
 	const int width = 128;
 	const int height = 128;
-	unsigned char* pixels[width][height][3];
+	unsigned char pixels[width * height *3] = { 0 };
 	std::string outputFilename = "Raytracer.png";
 
 	vec3 eyePosition = vec3(0, 0, 4);
@@ -173,14 +171,20 @@ int main()
 			Ray ray = ShootRay(camera, i, j, width, height);
 			Intersection intersection = FindIntersection(scene, ray);
 			vec3 colour = FindColour(intersection);
-			unsigned char col[3] = { colour[0], colour[1], colour[2] };
-			//memcpy(&pixels[i][j], &colour, 24);
+			unsigned char col[] = { 0, 0, 0 };
+			col[0] = colour[0] * 255;
+			col[1] = colour[1] * 255;
+			col[2] = colour[2] * 255;
+			memcpy(&pixels[i * j * 3], &col, 3);
+			
+			/*
 			if (colour != vec3(0, 0, 0))
 			{
-				pixels[i][j][0] = &col[0];
-				pixels[i][j][1] = &col[1];
-				pixels[i][j][2] = &col[2];
+				pixels[i * j * 3] = &col[0];
+				pixels[i * j * 3 + 1] = &col[1];
+				pixels[i * j * 3 + 2] = &col[2];
 			}
+			*/
 		}
 	}
 
