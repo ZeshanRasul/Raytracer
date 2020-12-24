@@ -12,13 +12,10 @@ public:
 		center(center),
 		up(up),
 		fovY(fovY)
-	{
-	}
+	{}
 
 	~Camera()
-	{
-
-	}
+	{}
 
 	vec3 eyePos, center, up;
 	float fovY;

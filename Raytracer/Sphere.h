@@ -14,8 +14,10 @@ public:
 		specular(specular),
 		emission(emission),
 		shininess(shininess)
-	{
-	}
+	{}
+	
+	~Sphere()
+	{};
 
 	vec3 center;
 	float radius;

@@ -157,6 +157,8 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Intersection.h" />
     <ClInclude Include="Ray.h" />
+    <ClInclude Include="Sphere.h" />
+    <ClInclude Include="Triangle.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

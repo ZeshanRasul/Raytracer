@@ -10,13 +10,10 @@ public:
 		:
 		origin(origin),
 		direction(direction)
-	{
-	}
+	{}
 
 	~Ray()
-	{
-
-	}
+	{}
 
 	vec4 origin;
 	vec4 direction;
