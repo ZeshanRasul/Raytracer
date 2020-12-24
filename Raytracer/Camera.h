@@ -6,11 +6,12 @@ using namespace glm;
 class Camera
 {
 public:
-	Camera(vec3 eyePos, vec3 center, vec3 up)
+	Camera(vec3 eyePos, vec3 center, vec3 up, float fovY)
 		:
 		eyePos(eyePos),
 		center(center),
-		up(up)
+		up(up),
+		fovY(fovY)
 	{
 	}
 
@@ -20,4 +21,5 @@ public:
 	}
 
 	vec3 eyePos, center, up;
+	float fovY;
 };

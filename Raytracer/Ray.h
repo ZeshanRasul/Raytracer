@@ -6,7 +6,7 @@ using namespace glm;
 class Ray
 {
 public:
-	Ray(vec4 origin, vec3 direction)
+	Ray(vec4 origin, vec4 direction)
 		:
 		origin(origin),
 		direction(direction)
@@ -19,5 +19,5 @@ public:
 	}
 
 	vec4 origin;
-	vec3 direction;
+	vec4 direction;
 };
