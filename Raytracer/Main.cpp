@@ -324,11 +324,13 @@ int main()
 
 	Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
 	scene.spheres.push_back(sphere0);
-	
-//	Triangle triangle0(vec3(-0.33, 0.33, -0), vec3(0.33, -0.33, 0), vec3(0.33, 0.33, 0), vec3(1.0f, 0.0f, 0.0f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(1.0f, 0.0f, 0.0f));
-//	scene.triangles.push_back(triangle0);
 
-	Light light0(vec3(4, 0, 4), vec3(0.5f, 0.5f, 0.5f));
+	
+
+	Triangle triangle0(vec3(-0.33, 0.33, 1), vec3(0.33, -0.33, 1), vec3(0.33, 0.33, 1), vec3(0.0f, 0.27f, 0.619f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.0f, 0.33f, 0.33f));
+	scene.triangles.push_back(triangle0);
+
+	Light light0(vec3(4, 4, 4), vec3(0.5f, 0.5f, 0.5f));
 	scene.lights.push_back(light0);
 
 	for (int i = 0; i < width; i++)
