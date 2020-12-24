@@ -3,9 +3,15 @@
 
 using namespace glm;
 
-class DirectionalLight
+class Light
 {
 public:
-	vec4 direction;
+	Light(vec3 position, vec3 colour)
+		:
+		position(position),
+		colour(colour)
+	{}
+
+	vec3 position;
 	vec3 colour;
 };

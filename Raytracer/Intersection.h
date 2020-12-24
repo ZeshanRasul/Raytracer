@@ -6,13 +6,14 @@ using namespace glm;
 class Intersection
 {
 public:
-	Intersection(bool didHit, 
-				 vec3 intersectionPoint, 
-				 vec3 hitObjectDiffuse, 
-				 vec3 hitObjectSpecular,
-				 vec3 hitObjectEmission,
-				 float hitObjectShininess,
-				 vec3 hitObjectAmbient)
+	Intersection(bool didHit,
+		vec3 intersectionPoint,
+		vec3 hitObjectDiffuse,
+		vec3 hitObjectSpecular,
+		vec3 hitObjectEmission,
+		float hitObjectShininess,
+		vec3 hitObjectAmbient,
+		vec3 hitObjectNormal)
 		:
 		didHit(didHit),
 		intersectionPoint(intersectionPoint),
@@ -20,7 +21,8 @@ public:
 		hitObjectSpecular(hitObjectSpecular),
 		hitObjectEmission(hitObjectEmission),
 		hitObjectShininess(hitObjectShininess),
-		hitObjectAmbient(hitObjectAmbient)
+		hitObjectAmbient(hitObjectAmbient),
+		hitObjectNormal(hitObjectNormal)
 	{		
 	}
 
@@ -35,4 +37,5 @@ public:
 	vec3 hitObjectEmission;
 	vec3 hitObjectAmbient;
 	float hitObjectShininess;
+	vec3 hitObjectNormal;
 };

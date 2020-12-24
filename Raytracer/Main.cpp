@@ -72,7 +72,7 @@ Ray ShootRay(Camera cam, int i, int j, int width, int height)
 
 }
 
-float CheckSphereIntersection(Sphere sphere, Ray ray, Camera camera)
+float CheckSphereIntersection(Sphere sphere, Ray ray)
 {
 
 	//vec4 newCenter = lookAt(camera.eyePos, camera.center, camera.up) * sphere.center;
@@ -93,7 +93,7 @@ float CheckSphereIntersection(Sphere sphere, Ray ray, Camera camera)
 	float b = 2 * (dot(ray.direction, (ray.origin - newCenter)));
 	float c = dot((ray.origin - newCenter), (ray.origin - newCenter)) - (sphere.radius * sphere.radius);
 
-	float returnVal;
+	float returnVal = INFINITY;
 	int roots = 0;
 
 //	float discriminant = (b * b) - (4 * a * c);
@@ -179,7 +179,7 @@ float CheckTriangleIntersection(Triangle triangle, Ray ray)
 	return t;
 }
 
-Intersection FindIntersection(Scene scene, Ray ray, Camera camera)
+Intersection FindIntersection(Scene scene, Ray ray)
 {
 	// For each sphere in scene and for each triangle in scene
 	// i < scene->spheres.length() test for intersection
@@ -194,12 +194,13 @@ Intersection FindIntersection(Scene scene, Ray ray, Camera camera)
 	vec3 hitObjectSpecular = vec3(0, 0, 0);
 	vec3 hitObjectEmission = vec3(0, 0, 0);
 	vec3 hitObjectAmbient = vec3(0, 0, 0);
+	vec3 hitObjectNormal = vec3(0, 0, 0);
 	float hitObjectShininess = 0.0f;
 
 
 	for (int i = 0; i < scene.spheres.size(); i++)
 	{
-		t = CheckSphereIntersection(scene.spheres[i], ray, camera);
+		t = CheckSphereIntersection(scene.spheres[i], ray);
 
 		if (t < minDist && t > 0)
 		{
@@ -209,7 +210,8 @@ Intersection FindIntersection(Scene scene, Ray ray, Camera camera)
 			hitObjectEmission = scene.spheres[i].emission;
 			hitObjectAmbient = scene.spheres[i].ambient;
 			hitObjectShininess = scene.spheres[i].shininess;
-			
+			hitObjectNormal = scene.spheres[i].normal;
+
 			minDist = t;
 			didHit = true;
 
@@ -229,12 +231,13 @@ Intersection FindIntersection(Scene scene, Ray ray, Camera camera)
 
 		if (t < minDist && t > 0)
 		{
-			//	hitObject = scene.spheres[i];
+			//hitObject = scene.spheres[i];
 			hitObjectDiffuse = scene.triangles[i].diffuse;
 			hitObjectSpecular = scene.triangles[i].specular;
 			hitObjectEmission = scene.triangles[i].emission;
 			hitObjectAmbient = scene.triangles[i].ambient;
 			hitObjectShininess = scene.triangles[i].shininess;
+			hitObjectNormal = scene.triangles[i].normal;
 
 			minDist = t;
 			didHit = true;
@@ -250,14 +253,51 @@ Intersection FindIntersection(Scene scene, Ray ray, Camera camera)
 	// Calculate intersection point
 	vec3 intersectionPoint = ray.origin + ray.direction * t;
 
-	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient);
+	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient, hitObjectNormal);
 }
 
-vec3 FindColour(Intersection intersection)
+Ray ShootShadowRay(Intersection intersection, Light light)
+{
+
+	vec3 direction = light.position - intersection.intersectionPoint;
+	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
+
+	Ray ray(origin, direction);
+	return ray;
+}
+
+vec3 ComputeLighting(Intersection intersection, Light light, Camera camera)
+{
+	vec3 finalColour;
+
+	float nDotL = dot(intersection.hitObjectNormal, light.position);
+	// No attenuation for now
+	vec3 lambert = intersection.hitObjectDiffuse * light.colour * max(nDotL, 0.0f);
+
+	vec3 halfVec = normalize(light.position + camera.eyePos);
+	float nDotH = dot(intersection.hitObjectNormal, halfVec);
+	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
+
+	return finalColour = intersection.hitObjectAmbient + intersection.hitObjectEmission + lambert + phong;
+}
+
+vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 {
 	if (intersection.didHit == true)
 	{
-		return intersection.hitObjectAmbient;
+		vec3 finalColour(0, 0, 0);
+		for (int i = 0; i < scene.lights.size(); i++)
+		{
+			Ray ray = ShootShadowRay(intersection, scene.lights[i]);
+			Intersection shadowIntersection = FindIntersection(scene, ray);
+			if (shadowIntersection.didHit == false)
+			{
+				vec3 colour = ComputeLighting(intersection, scene.lights[i], camera);
+				finalColour = finalColour + colour;
+			}
+		}
+
+		return finalColour;
 	}
 	else
 	{
@@ -282,11 +322,14 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	//Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
-	//scene.spheres.push_back(sphere0);
+	Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(0.67, 0.33, 0.93));
+	scene.spheres.push_back(sphere0);
 	
-	Triangle triangle0(vec3(-0.33, 0.33, -0), vec3(0.33, -0.33, 0), vec3(0.33, 0.33, 0), vec3(1.0f, 0.0f, 0.0f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(1.0f, 0.0f, 0.0f));
-	scene.triangles.push_back(triangle0);
+//	Triangle triangle0(vec3(-0.33, 0.33, -0), vec3(0.33, -0.33, 0), vec3(0.33, 0.33, 0), vec3(1.0f, 0.0f, 0.0f), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f, vec3(1.0f, 0.0f, 0.0f));
+//	scene.triangles.push_back(triangle0);
+
+	Light light0(vec3(4, 0, 4), vec3(0.5f, 0.5f, 0.5f));
+	scene.lights.push_back(light0);
 
 	for (int i = 0; i < width; i++)
 	{
@@ -294,8 +337,8 @@ int main()
 		{
 			// Shoot Ray
 			Ray ray = ShootRay(camera, i, j, width, height);
-			Intersection intersection = FindIntersection(scene, ray, camera);
-			vec3 colour = FindColour(intersection);
+			Intersection intersection = FindIntersection(scene, ray);
+			vec3 colour = FindColour(intersection, scene, camera);
 			unsigned char col[] = { 0, 0, 0 };
 			col[0] = unsigned char(colour[0] * 255);
 			col[1] = unsigned char(colour[1] * 255);

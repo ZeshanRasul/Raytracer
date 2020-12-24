@@ -10,5 +10,5 @@ class Scene
 public:
 	std::vector<Sphere> spheres;
 	std::vector<Triangle> triangles;
-	std::vector<DirectionalLight> lights;
+	std::vector<Light> lights;
 };
