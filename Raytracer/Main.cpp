@@ -3,6 +3,9 @@
 #include "Ray.h"
 #include "Camera.h"
 #include "Intersection.h"
+#include "Scene.h"
+#include "Sphere.h"
+#include "Triangle.h"
 
 Ray ShootRay(Camera cam, int i, int j, int width, int height)
 {
@@ -50,6 +53,13 @@ int main()
 	// Create new Camera with default values 
 	Camera camera(eyePosition, center, up, fovY);
 
+	// Create new Scene and add Sphere and then Triangle
+	Scene scene;
+
+	Sphere sphere0(vec3(0, 0, 0), 0.666, vec3(0.67, 0.33, 0.93), vec3(0.2, 0.2, 0.2), vec3(0.1, 0.1, 0.1), 20.0f);
+	//Create Triangle here
+
+	scene.spheres.push_back(sphere0);
 
 	for (int i = 0; i < width; i++)
 	{
