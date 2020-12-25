@@ -362,7 +362,7 @@ int main()
 	unsigned char* pixels = new unsigned char [width * height * 3];
 	std::string outputFilename = "Raytracer.png";
 
-	vec3 eyePosition = vec3(3, 0, -3);
+	vec3 eyePosition = vec3(-3, 0, -3);
 	vec3 center = vec3(0, 0, 0);
 	vec3 up = vec3(0, 1, 0);
 	float fovY = radians(60.0f);
@@ -372,7 +372,7 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	Sphere sphere0(vec3(0.0f, -0.2f, 0.0f), 0.25f, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
+	Sphere sphere0(vec3(0.0f, 0.0f, 0.0f), 0.25f, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
 
 	Sphere sphere1(vec3(-0.33f, -0.33f, 0.0f), 0.18f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
 
@@ -435,7 +435,7 @@ int main()
 	// +Z
 	scene.triangles.push_back(tri10);
 	scene.triangles.push_back(tri11);
-
+	
 	Triangle triangle0(vec3(0, 0.2, -0.33f), vec3(0.33, 0.0f, -0.33f), vec3(0.33, 0.2, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
 //	scene.triangles.push_back(triangle0);
 
@@ -449,20 +449,20 @@ int main()
 //	scene.pointLights.push_back(light1);
 
 	
-	DirectionalLight lightDir(vec3(-1, 0, 0), vec3(0.0f, 0.6f, 0.7f));
+	DirectionalLight lightDir(vec3(3, 0, 3), vec3(0.0f, 0.6f, 0.7f));
 	scene.dirLights.push_back(lightDir);
 
 	DirectionalLight lightDir1(vec3(-1, -2, -3), vec3(1.0f, 1.0f, 1.0f));
 //	scene.dirLights.push_back(lightDir1);
 
 	DirectionalLight lightDir2(vec3(1, 0, 0), vec3(0.0f, 0.6f, 0.7f));
-	scene.dirLights.push_back(lightDir2);
+//	scene.dirLights.push_back(lightDir2);
 
 	DirectionalLight lightDir3(vec3(0, 1, 0), vec3(1.0f, 1.0f, 1.0f));
-	scene.dirLights.push_back(lightDir3);
+//	scene.dirLights.push_back(lightDir3);
 
 	DirectionalLight lightDir4(vec3(0, -1, 0), vec3(1.0f, 1.0f, 1.0f));
-	scene.dirLights.push_back(lightDir4);
+//	scene.dirLights.push_back(lightDir4);
 
 
 
