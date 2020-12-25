@@ -250,7 +250,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 Ray ShootShadowRay(Intersection intersection, vec3 lightPosition)
 {
 
-	vec3 direction =  lightPosition - intersection.intersectionPoint;
+	vec3 direction =  intersection.intersectionPoint - lightPosition;
 	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
 
 	Ray ray(origin, direction);
@@ -333,7 +333,7 @@ int main()
 	unsigned char pixels[width * height * 3] = { 0 };
 	std::string outputFilename = "Raytracer.png";
 
-	vec3 eyePosition = vec3(0, 2, -2);
+	vec3 eyePosition = vec3(0, 0, -1);
 	vec3 center = vec3(0, 0, 0);
 	vec3 up = vec3(0, 1, 0);
 	float fovY = radians(45.0f);
@@ -343,20 +343,24 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
+	Sphere sphere0(vec3(0, 0, 0.15f), 0.25f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
 	scene.spheres.push_back(sphere0);
 
-	Sphere sphere1(vec3(0.5, 0.5, 0.0f), 0.5f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
-	scene.spheres.push_back(sphere1);
+	Sphere sphere1(vec3(0.5f, 0.5f, 0.15f), 0.25f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
+//	scene.spheres.push_back(sphere1);
 
 	Triangle triangle0(vec3(-0.33, 0.33, 1.0f), vec3(0.33, -0.33, 1), vec3(0.33, 0.33, 1), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
-	scene.triangles.push_back(triangle0);
+//	scene.triangles.push_back(triangle0);
 
 	Triangle triangle1(vec3(+0.33, -0.33, 1.0f), vec3(-0.33, 0.33, 1), vec3(-0.33, -0.33, 1), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
-	scene.triangles.push_back(triangle1);
+//	scene.triangles.push_back(triangle1);
 
-	PointLight lightPoint(vec3(4, 0, 4), vec3(0.0f, 0.9f, 0.5f));
-	scene.pointLights.push_back(lightPoint);
+	PointLight light0(vec3(4, 0, -4), vec3(0.5f, 0.5f, 0.5f));
+	scene.pointLights.push_back(light0);
+
+	PointLight light1(vec3(-4, 0, 0), vec3(0.5f, 0.5f, 0.5f));
+	scene.pointLights.push_back(light1);
+
 	
 	DirectionalLight lightDir(vec3(0, 0, -1), vec3(0.0f, 0.5f, 0.7f));
 	scene.dirLights.push_back(lightDir);
