@@ -328,7 +328,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 	}
 	else
 	{
-		return vec3(0, 0, 0);
+		return vec3(1, 1, 1);
 	}
 }
 
@@ -356,7 +356,7 @@ int main()
 
 
 	Sphere sphere2(vec3(-0.22f, -0.22f, 0.0f), 0.136f, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
-//	scene.spheres.push_back(sphere2);
+	scene.spheres.push_back(sphere2);
 
 	scene.spheres.push_back(sphere0);
 
