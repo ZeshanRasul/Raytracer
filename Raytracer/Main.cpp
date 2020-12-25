@@ -275,7 +275,7 @@ vec3 ComputePointLighting(Intersection intersection, PointLight light, Camera ca
 	float nDotH = dot(intersection.hitObjectNormal, halfVec);
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
-	return finalColour = lambert + phong;
+	return finalColour = phong;
 }
 
 vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight light, Camera camera)
@@ -291,14 +291,14 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 	float nDotH = dot(intersection.hitObjectNormal, halfVec);
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
-	return finalColour = lambert + phong;
+	return finalColour = lambert ;
 }
 
 vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 {
 	if (intersection.didHit == true)
 	{
-		vec3 finalColour = intersection.hitObjectAmbient + intersection.hitObjectEmission;
+		vec3 finalColour(0, 0, 0);
 		vec3 col1(0, 0, 0);
 		vec3 col2(0, 0, 0);
 
@@ -306,7 +306,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 		{
 			Ray ray = ShootShadowRay(intersection, normalize(scene.pointLights[i].position - intersection.intersectionPoint));
 			Intersection shadowIntersection = FindIntersection(scene, ray);
-			if (shadowIntersection.didHit == false)
+			if (shadowIntersection.didHit != true)
 			{
 				vec3 colour = ComputePointLighting(intersection, scene.pointLights[i], camera);
 				col1 = col1 + colour;
@@ -317,14 +317,14 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 		{
 			Ray ray = ShootShadowRay(intersection, normalize(scene.dirLights[i].direction));
 			Intersection shadowIntersection = FindIntersection(scene, ray);
-			if (shadowIntersection.didHit == false)
+			if (shadowIntersection.didHit != true)
 			{
 				vec3 colour = ComputeDirectionalLighting(intersection, scene.dirLights[i], camera);
 				col2 = col2 + colour;
 			}
 		}
 
-		return finalColour = finalColour + col1 + col2;
+		return finalColour = finalColour + col1 + col2 + intersection.hitObjectAmbient + intersection.hitObjectEmission;;
 	}
 	else
 	{
@@ -351,14 +351,14 @@ int main()
 
 	Sphere sphere0(vec3(0.0f, 0.0f, 0.0f), 0.25f, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
 
-	Sphere sphere1(vec3(-0.33f, -0.33f, 0.0f), 0.18f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
-	scene.spheres.push_back(sphere1);
+	Sphere sphere1(vec3(-0.33f, -0.33f, 0.0f), 0.18f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
 
-
-	Sphere sphere2(vec3(-0.22f, -0.22f, 0.0f), 0.136f, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
-	scene.spheres.push_back(sphere2);
 
 	scene.spheres.push_back(sphere0);
+	Sphere sphere2(vec3(-0.22f, -0.22f, 0.0f), 0.136f, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
+	scene.spheres.push_back(sphere1);
+	scene.spheres.push_back(sphere2);
+
 
 	Triangle triangle0(vec3(0, 0.2, -0.33f), vec3(0.33, 0.0f, -0.33f), vec3(0.33, 0.2, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
 	scene.triangles.push_back(triangle0);
