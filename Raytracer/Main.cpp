@@ -377,22 +377,23 @@ int main()
 
 	// front face
 
-	Triangle tri0(vert2, vert1, vert0, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri1(vert3, vert2, vert0, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri2(vert4, vert6, vert5, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri3(vert4, vert7, vert6, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri4(vert4, vert5, vert1, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri5(vert4, vert1, vert0, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri6(vert3, vert2, vert6, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri7(vert3, vert6, vert7, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri8(vert1, vert5, vert6, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri9(vert1, vert6, vert2, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri10(vert4, vert0, vert3, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri11(vert4, vert3, vert7, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri0(vert0, vert3, vert7, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
+	Triangle tri1(vert0, vert7, vert4, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri2(vert1, vert5, vert6, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri3(vert1, vert6, vert2, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri4(vert3, vert2, vert6, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri5(vert3, vert6, vert7, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri6(vert0, vert5, vert1, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri7(vert0, vert4, vert5, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
 
-	// front face
-	scene.triangles.push_back(tri0);
-	scene.triangles.push_back(tri1);
+	Triangle tri8(vert0, vert1, vert2, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri9(vert0, vert2, vert3, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+
+	// -Y
+//	scene.triangles.push_back(tri0);
+//	scene.triangles.push_back(tri1);
 	
 	// back face
 //	scene.triangles.push_back(tri2);
@@ -410,9 +411,9 @@ int main()
 //	scene.triangles.push_back(tri8);
 //	scene.triangles.push_back(tri9);
 
-	// bottom face
-//	scene.triangles.push_back(tri10);
-//	scene.triangles.push_back(tri11);
+	// +Z
+	scene.triangles.push_back(tri10);
+	scene.triangles.push_back(tri11);
 
 	Triangle triangle0(vec3(0, 0.2, -0.33f), vec3(0.33, 0.0f, -0.33f), vec3(0.33, 0.2, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
 //	scene.triangles.push_back(triangle0);
