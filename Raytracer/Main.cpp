@@ -187,9 +187,12 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	// return closest intersection
 	
 	float minDist = INFINITY;
-	//Object hitObject;
+	Sphere hitSphere;
+	Triangle hitTriangle;
 	bool didHit = false;
 	float t = minDist;
+	float tSphere = minDist;
+	float tTriangle = minDist;
 	vec3 hitObjectDiffuse = vec3(0, 0, 0);
 	vec3 hitObjectSpecular = vec3(0, 0, 0);
 	vec3 hitObjectEmission = vec3(0, 0, 0);
@@ -200,19 +203,19 @@ Intersection FindIntersection(Scene scene, Ray ray)
 
 	for (int i = 0; i < scene.spheres.size(); i++)
 	{
-		t = CheckSphereIntersection(scene.spheres[i], ray);
+		tSphere = CheckSphereIntersection(scene.spheres[i], ray);
 
-		if (t < minDist && t > 0)
+		if (tSphere < minDist && tSphere > 0)
 		{
-		//	hitObject = scene.spheres[i];
+		//	hitSphere = scene.spheres[i];
 			hitObjectDiffuse = scene.spheres[i].diffuse;
 			hitObjectSpecular = scene.spheres[i].specular;
 			hitObjectEmission = scene.spheres[i].emission;
 			hitObjectAmbient = scene.spheres[i].ambient;
 			hitObjectShininess = scene.spheres[i].shininess;
-			hitObjectNormal = normalize((ray.origin + ray.direction * t) - scene.spheres[i].center);
+			hitObjectNormal = normalize((ray.origin + ray.direction * tSphere) - scene.spheres[i].center);
 
-			minDist = t;
+			minDist = tSphere;
 			didHit = true;
 
 		}
@@ -223,11 +226,11 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	
 	for (int i = 0; i < scene.triangles.size(); i++)
 	{
-		t = CheckTriangleIntersection(scene.triangles[i], ray);
+		tTriangle = CheckTriangleIntersection(scene.triangles[i], ray);
 
-		if (t < minDist && t > 0)
+		if (tTriangle < minDist && tTriangle > 0)
 		{
-			//hitObject = scene.spheres[i];
+			//hitObject = scene.triangles[i];
 			hitObjectDiffuse = scene.triangles[i].diffuse;
 			hitObjectSpecular = scene.triangles[i].specular;
 			hitObjectEmission = scene.triangles[i].emission;
@@ -235,12 +238,13 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectShininess = scene.triangles[i].shininess;
 			hitObjectNormal = normalize(cross((scene.triangles[i].vertex2 - scene.triangles[i].vertex0), (scene.triangles[i].vertex1 - scene.triangles[i].vertex0)));
 
-			minDist = t;
+			minDist = tTriangle;
 			didHit = true;
 
 		}
 	}
 
+	tSphere < tTriangle ? t = tSphere : t = tTriangle;
 	// Calculate intersection point
 	vec3 intersectionPoint = ray.origin + ray.direction * t;
 
@@ -294,8 +298,10 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 {
 	if (intersection.didHit == true)
 	{
-		vec3 finalColour(0,0,0);
-		vec3 computedColour;
+		vec3 finalColour = intersection.hitObjectAmbient + intersection.hitObjectEmission;
+		vec3 col1(0, 0, 0);
+		vec3 col2(0, 0, 0);
+
 		for (int i = 0; i < scene.pointLights.size(); i++)
 		{
 			Ray ray = ShootShadowRay(intersection, normalize(scene.pointLights[i].position - intersection.intersectionPoint));
@@ -303,7 +309,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 			if (shadowIntersection.didHit == false)
 			{
 				vec3 colour = ComputePointLighting(intersection, scene.pointLights[i], camera);
-				finalColour += colour;
+				col1 = col1 + colour;
 			}
 		}
 
@@ -314,11 +320,11 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 			if (shadowIntersection.didHit == false)
 			{
 				vec3 colour = ComputeDirectionalLighting(intersection, scene.dirLights[i], camera);
-				finalColour += colour;
+				col2 = col2 + colour;
 			}
 		}
 
-		return finalColour = finalColour + intersection.hitObjectAmbient + intersection.hitObjectEmission;
+		return finalColour = finalColour + col1 + col2;
 	}
 	else
 	{
@@ -333,40 +339,52 @@ int main()
 	unsigned char pixels[width * height * 3] = { 0 };
 	std::string outputFilename = "Raytracer.png";
 
-	vec3 eyePosition = vec3(0, 2, -2);
+	vec3 eyePosition = vec3(0, 0, -1);
 	vec3 center = vec3(0, 0, 0);
 	vec3 up = vec3(0, 1, 0);
-	float fovY = radians(45.0f);
+	float fovY = radians(60.0f);
 	// Create new Camera with default values 
 	Camera camera(eyePosition, center, up, fovY);
 
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	Sphere sphere0(vec3(0, 0, 0.0f), 0.75f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
-	scene.spheres.push_back(sphere0);
+	Sphere sphere0(vec3(0.0f, 0.0f, 0.0f), 0.25f, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
 
-	Sphere sphere1(vec3(0.5f, 0.5f, 0.15f), 0.25f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
+	Sphere sphere1(vec3(-0.33f, -0.33f, 0.0f), 0.04f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
 //	scene.spheres.push_back(sphere1);
 
-	Triangle triangle0(vec3(-0.33, 0.33, 1.0f), vec3(0.33, -0.33, 1), vec3(0.33, 0.33, 1), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
-//	scene.triangles.push_back(triangle0);
 
-	Triangle triangle1(vec3(+0.33, -0.33, 1.0f), vec3(-0.33, 0.33, 1), vec3(-0.33, -0.33, 1), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
+	Sphere sphere2(vec3(-0.22f, -0.22f, 0.0f), 0.136f, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
+//	scene.spheres.push_back(sphere2);
+
+	scene.spheres.push_back(sphere0);
+
+	Triangle triangle0(vec3(0, 0.2, -0.33f), vec3(0.33, 0.0f, -0.33f), vec3(0.33, 0.2, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
+	scene.triangles.push_back(triangle0);
+
+	Triangle triangle1(vec3(+0.33, -0.33, -0.33f), vec3(-0.33, 0.33, -0.33f), vec3(-0.33, -0.33, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
 //	scene.triangles.push_back(triangle1);
 
-	PointLight light0(vec3(4, 0, -4), vec3(0.0f, 0.5f, 0.9f));
-	scene.pointLights.push_back(light0);
+	PointLight light0(vec3(4, 0, -4), vec3(1.0f, 0.0f, 0.0f));
+//	scene.pointLights.push_back(light0);
 
 	PointLight light1(vec3(-4, 0, 0), vec3(1.0f, 0.2f, 0.0f));
-	scene.pointLights.push_back(light1);
+//	scene.pointLights.push_back(light1);
 
 	
-	DirectionalLight lightDir(vec3(0, 0, -1), vec3(0.0f, 0.6f, 0.7f));
+	DirectionalLight lightDir(vec3(-1, 0, 0), vec3(0.0f, 0.6f, 0.7f));
 	scene.dirLights.push_back(lightDir);
 
-	DirectionalLight lightDir1(vec3(1, 0, 1), vec3(0.0f, 0.1f, 0.7f));
+	DirectionalLight lightDir1(vec3(-1, -2, -3), vec3(1.0f, 1.0f, 1.0f));
 	scene.dirLights.push_back(lightDir1);
+
+	DirectionalLight lightDir2(vec3(-1, 0, -3), vec3(0.0f, 0.6f, 0.7f));
+//	scene.dirLights.push_back(lightDir2);
+
+	DirectionalLight lightDir3(vec3(1, 2, 3), vec3(1.0f, 1.0f, 1.0f));
+//	scene.dirLights.push_back(lightDir3);
+
 
 
 	for (int i = 0; i < width; i++)

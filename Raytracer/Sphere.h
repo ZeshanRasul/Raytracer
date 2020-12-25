@@ -18,6 +18,9 @@ public:
 		ambient(ambient)
 	{}
 	
+	Sphere()
+	{}
+
 	~Sphere()
 	{};
 
