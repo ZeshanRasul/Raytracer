@@ -275,7 +275,7 @@ vec3 ComputePointLighting(Intersection intersection, PointLight light, Camera ca
 	float nDotH = dot(intersection.hitObjectNormal, halfVec);
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
-	return finalColour = phong;
+	return finalColour = lambert + phong;
 }
 
 vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight light, Camera camera)
@@ -291,7 +291,7 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 	float nDotH = dot(intersection.hitObjectNormal, halfVec);
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
-	return finalColour = lambert ;
+	return finalColour = lambert + phong;
 }
 
 vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
@@ -324,7 +324,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 			}
 		}
 
-		return finalColour = finalColour + col1 + col2 + intersection.hitObjectAmbient + intersection.hitObjectEmission;;
+		return finalColour = finalColour + col1 + col2 + intersection.hitObjectAmbient + intersection.hitObjectEmission;
 	}
 	else
 	{
@@ -336,10 +336,10 @@ int main()
 {
 	const int width = 160;
 	const int height = 120;
-	unsigned char pixels[width * height * 3] = { 0 };
+	unsigned char* pixels = new unsigned char [width * height * 3];
 	std::string outputFilename = "Raytracer.png";
 
-	vec3 eyePosition = vec3(0, 0, -1);
+	vec3 eyePosition = vec3(1, 0, -1);
 	vec3 center = vec3(0, 0, 0);
 	vec3 up = vec3(0, 1, 0);
 	float fovY = radians(60.0f);
@@ -354,16 +354,70 @@ int main()
 	Sphere sphere1(vec3(-0.33f, -0.33f, 0.0f), 0.18f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
 
 
-	scene.spheres.push_back(sphere0);
+//	scene.spheres.push_back(sphere0);
 	Sphere sphere2(vec3(-0.22f, -0.22f, 0.0f), 0.136f, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
-	scene.spheres.push_back(sphere1);
-	scene.spheres.push_back(sphere2);
+//	scene.spheres.push_back(sphere1);
+//	scene.spheres.push_back(sphere2);
 
+	// Create cube vertices
 
-	Triangle triangle0(vec3(0, 0.2, -0.33f), vec3(0.33, 0.0f, -0.33f), vec3(0.33, 0.2, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
-	scene.triangles.push_back(triangle0);
+	float triWidth = 0.2f;
+	float triHeight = 0.2f;
+	float triDepth = 0.2f;
+	float triCenter = 0.0f;
 
-	Triangle triangle1(vec3(+0.33, -0.33, -0.33f), vec3(-0.33, 0.33, -0.33f), vec3(-0.33, -0.33, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
+	vec3 vert0(-triWidth, -triHeight, -triDepth + triCenter);
+	vec3 vert1(-triWidth, +triHeight, -triDepth + triCenter);
+	vec3 vert2(+triWidth, +triHeight, -triDepth + triCenter);
+	vec3 vert3(+triWidth, -triHeight, -triDepth + triCenter);
+	vec3 vert4(-triWidth, -triHeight, +triDepth + triCenter);
+	vec3 vert5(-triWidth, +triHeight, +triDepth + triCenter);
+	vec3 vert6(+triWidth, +triHeight, +triDepth + triCenter);
+	vec3 vert7(+triWidth, -triHeight, +triDepth + triCenter);
+
+	// front face
+
+	Triangle tri0(vert0, vert1, vert2, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri1(vert0, vert2, vert3, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri2(vert4, vert6, vert5, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri3(vert4, vert7, vert6, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri4(vert4, vert5, vert1, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri5(vert4, vert1, vert0, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri6(vert3, vert2, vert6, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri7(vert3, vert6, vert7, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri8(vert1, vert5, vert6, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri9(vert1, vert6, vert2, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri10(vert4, vert0, vert3, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri11(vert4, vert3, vert7, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+
+	// front face
+	scene.triangles.push_back(tri0);
+	scene.triangles.push_back(tri1);
+	
+	// back face
+	scene.triangles.push_back(tri2);
+	scene.triangles.push_back(tri3);
+
+	// left face
+//	scene.triangles.push_back(tri4);
+//	scene.triangles.push_back(tri5);
+
+	// right face
+//	scene.triangles.push_back(tri6);
+//	scene.triangles.push_back(tri7);
+
+	// top face
+//	scene.triangles.push_back(tri8);
+//	scene.triangles.push_back(tri9);
+
+	// bottom face
+//	scene.triangles.push_back(tri10);
+//	scene.triangles.push_back(tri11);
+
+	Triangle triangle0(vec3(0, 0.2, -0.33f), vec3(0.33, 0.0f, -0.33f), vec3(0.33, 0.2, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
+//	scene.triangles.push_back(triangle0);
+
+	Triangle triangle1(vec3(+0.33, -0.33, -0.33f), vec3(-0.33, 0.33, -0.33f), vec3(-0.33, -0.33, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
 //	scene.triangles.push_back(triangle1);
 
 	PointLight light0(vec3(4, 0, -4), vec3(1.0f, 0.0f, 0.0f));
@@ -373,11 +427,11 @@ int main()
 //	scene.pointLights.push_back(light1);
 
 	
-	DirectionalLight lightDir(vec3(-1, 0, 0), vec3(0.0f, 0.6f, 0.7f));
+	DirectionalLight lightDir(vec3(0, 0, -1), vec3(0.0f, 0.6f, 0.7f));
 	scene.dirLights.push_back(lightDir);
 
 	DirectionalLight lightDir1(vec3(-1, -2, -3), vec3(1.0f, 1.0f, 1.0f));
-	scene.dirLights.push_back(lightDir1);
+//	scene.dirLights.push_back(lightDir1);
 
 	DirectionalLight lightDir2(vec3(-1, 0, -3), vec3(0.0f, 0.6f, 0.7f));
 //	scene.dirLights.push_back(lightDir2);
