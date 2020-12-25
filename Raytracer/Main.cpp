@@ -377,8 +377,8 @@ int main()
 
 	// front face
 
-	Triangle tri0(vert0, vert1, vert2, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri1(vert0, vert2, vert3, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri0(vert2, vert1, vert0, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri1(vert3, vert2, vert0, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
 	Triangle tri2(vert4, vert6, vert5, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
 	Triangle tri3(vert4, vert7, vert6, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
 	Triangle tri4(vert4, vert5, vert1, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
@@ -395,8 +395,8 @@ int main()
 	scene.triangles.push_back(tri1);
 	
 	// back face
-	scene.triangles.push_back(tri2);
-	scene.triangles.push_back(tri3);
+//	scene.triangles.push_back(tri2);
+//	scene.triangles.push_back(tri3);
 
 	// left face
 //	scene.triangles.push_back(tri4);
