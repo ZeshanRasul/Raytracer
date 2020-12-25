@@ -3,15 +3,15 @@
 
 using namespace glm;
 
-class DirectionalLight
+class PointLight
 {
 public:
-	DirectionalLight(vec3 direction, vec3 colour)
+	PointLight(vec3 position, vec3 colour)
 		:
-		direction(direction),
+		position(position),
 		colour(colour)
 	{}
 
-	vec3 direction;
+	vec3 position;
 	vec3 colour;
 };

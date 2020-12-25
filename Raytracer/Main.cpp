@@ -247,26 +247,43 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient, hitObjectNormal);
 }
 
-Ray ShootShadowRay(Intersection intersection, Light light)
+Ray ShootShadowRay(Intersection intersection, vec3 lightPosition)
 {
 
-	vec3 direction =  light.position - intersection.intersectionPoint;
+	vec3 direction =  lightPosition - intersection.intersectionPoint;
 	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
 
 	Ray ray(origin, direction);
 	return ray;
 }
 
-vec3 ComputeLighting(Intersection intersection, Light light, Camera camera)
+vec3 ComputePointLighting(Intersection intersection, PointLight light, Camera camera)
 {
 	vec3 finalColour;
 	vec3 eyeDirection = normalize(camera.eyePos - intersection.intersectionPoint);
-	vec3 normalizedLightDirection = normalize(light.position);
-	float nDotL = dot(intersection.hitObjectNormal, normalizedLightDirection);
+
+	vec3 directionPoint = normalize(light.position - intersection.intersectionPoint);
+	float nDotL = dot(intersection.hitObjectNormal, directionPoint);
 	// No attenuation for now
 	vec3 lambert = intersection.hitObjectDiffuse * light.colour * max(nDotL, 0.0f);
 
 	vec3 halfVec = normalize(light.position + eyeDirection);
+	float nDotH = dot(intersection.hitObjectNormal, halfVec);
+	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
+
+	return finalColour = lambert + phong;
+}
+
+vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight light, Camera camera)
+{
+	vec3 finalColour;
+	vec3 eyeDirection = normalize(camera.eyePos - intersection.intersectionPoint);
+	vec3 normalizedLightDirection = normalize(light.direction);
+	float nDotL = dot(intersection.hitObjectNormal, normalizedLightDirection);
+	// No attenuation for now
+	vec3 lambert = intersection.hitObjectDiffuse * light.colour * max(nDotL, 0.0f);
+
+	vec3 halfVec = normalize(light.direction + eyeDirection);
 	float nDotH = dot(intersection.hitObjectNormal, halfVec);
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
@@ -279,13 +296,24 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 	{
 		vec3 finalColour(0,0,0);
 		vec3 computedColour;
-		for (int i = 0; i < scene.lights.size(); i++)
+		for (int i = 0; i < scene.pointLights.size(); i++)
 		{
-			Ray ray = ShootShadowRay(intersection, scene.lights[i]);
+			Ray ray = ShootShadowRay(intersection, scene.pointLights[i].position);
 			Intersection shadowIntersection = FindIntersection(scene, ray);
 			if (shadowIntersection.didHit == false)
 			{
-				vec3 colour = ComputeLighting(intersection, scene.lights[i], camera);
+				vec3 colour = ComputePointLighting(intersection, scene.pointLights[i], camera);
+				finalColour += colour;
+			}
+		}
+
+		for (int i = 0; i < scene.dirLights.size(); i++)
+		{
+			Ray ray = ShootShadowRay(intersection, scene.dirLights[i].direction);
+			Intersection shadowIntersection = FindIntersection(scene, ray);
+			if (shadowIntersection.didHit == false)
+			{
+				vec3 colour = ComputeDirectionalLighting(intersection, scene.dirLights[i], camera);
 				finalColour += colour;
 			}
 		}
@@ -305,7 +333,7 @@ int main()
 	unsigned char pixels[width * height * 3] = { 0 };
 	std::string outputFilename = "Raytracer.png";
 
-	vec3 eyePosition = vec3(0, 0, -1);
+	vec3 eyePosition = vec3(0, 2, -2);
 	vec3 center = vec3(0, 0, 0);
 	vec3 up = vec3(0, 1, 0);
 	float fovY = radians(45.0f);
@@ -318,7 +346,7 @@ int main()
 	Sphere sphere0(vec3(0, 0, 0), 0.15f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
 	scene.spheres.push_back(sphere0);
 
-	Sphere sphere1(vec3(0.5, 0.5, 0.15f), 0.5f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
+	Sphere sphere1(vec3(0.5, 0.5, 0.0f), 0.5f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
 	scene.spheres.push_back(sphere1);
 
 	Triangle triangle0(vec3(-0.33, 0.33, 1.0f), vec3(0.33, -0.33, 1), vec3(0.33, 0.33, 1), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
@@ -327,11 +355,15 @@ int main()
 	Triangle triangle1(vec3(+0.33, -0.33, 1.0f), vec3(-0.33, 0.33, 1), vec3(-0.33, -0.33, 1), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.0f, vec3(0.1, 0.1, 0.1));
 	scene.triangles.push_back(triangle1);
 
-	Light light0(vec3(4, 0, 4), vec3(0.5f, 0.5f, 0.5f));
-	scene.lights.push_back(light0);
+	PointLight lightPoint(vec3(4, 0, 4), vec3(0.0f, 0.9f, 0.5f));
+	scene.pointLights.push_back(lightPoint);
 	
-	//Light light1(vec3(0, 0, -1), vec3(0.0f, 0.5f, 0.7f));
-	//scene.lights.push_back(light1);
+	DirectionalLight lightDir(vec3(0, 0, -1), vec3(0.0f, 0.5f, 0.7f));
+	scene.dirLights.push_back(lightDir);
+
+	DirectionalLight lightDir1(vec3(1, 0, 1), vec3(0.0f, 0.5f, 0.7f));
+	scene.dirLights.push_back(lightDir1);
+
 
 	for (int i = 0; i < width; i++)
 	{
