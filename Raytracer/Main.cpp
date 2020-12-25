@@ -158,7 +158,7 @@ float CheckTriangleIntersection(Triangle triangle, Ray ray)
 {
 	// Find plane normal
 	triangle.normal = normalize(cross((triangle.vertex2 - triangle.vertex0), (triangle.vertex1 - triangle.vertex0)));
-
+	/*
 	// Find point on Ray Plane intersection
 	float t = (dot(triangle.vertex0, triangle.normal) - dot(ray.origin, triangle.normal)) / dot(ray.direction, triangle.normal);
 	
@@ -169,6 +169,25 @@ float CheckTriangleIntersection(Triangle triangle, Ray ray)
 
 	float beta = ((b.x * h.y) - (b.y * h.x)) / ((b.x * c.y) - (b.y * c.x));
 	float gamma = ((h.x * c.y) - (h.y * c.x)) / ((b.x * c.y) - (b.y * c.x));
+
+	if (beta < 0 || gamma < 0 || beta + gamma > 1)
+	{
+		t = INFINITY;
+		return t;
+	}
+	*/
+
+	vec3 e1 = triangle.vertex1 - triangle.vertex0;
+	vec3 e2 = triangle.vertex2 - triangle.vertex0;
+	vec3 s = ray.origin - triangle.vertex0;
+	vec3 s1 = cross(ray.direction, e2);
+	vec3 s2 = cross(s, e1);
+
+	vec3 tBetaGamma = (1 / dot(s1, e1)) * vec3(dot(s2, e2), dot(s1, s), dot(s2, ray.direction));
+
+	float t = tBetaGamma.x;
+	float beta = tBetaGamma.y;
+	float gamma = tBetaGamma.z;
 
 	if (beta < 0 || gamma < 0 || beta + gamma > 1)
 	{
@@ -342,7 +361,7 @@ int main()
 	unsigned char* pixels = new unsigned char [width * height * 3];
 	std::string outputFilename = "Raytracer.png";
 
-	vec3 eyePosition = vec3(2, 2, 2);
+	vec3 eyePosition = vec3(3, 3, 3);
 	vec3 center = vec3(0, 0, 0);
 	vec3 up = vec3(-1, -1, 2);
 	float fovY = radians(60.0f);
@@ -364,9 +383,9 @@ int main()
 
 	// Create cube vertices
 
-	float triWidth = 0.2f;
-	float triHeight = 0.2f;
-	float triDepth = 0.2f;
+	float triWidth = 1.0f;
+	float triHeight = 1.0f;
+	float triDepth = 1.0f;
 	float triCenter = 0.0f;
 
 	vec3 vert0(-triWidth + triCenter, -triHeight + triCenter, -triDepth + triCenter);
@@ -393,19 +412,19 @@ int main()
 	Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 1.0f, 0.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
 
 	// -Y
-//	scene.triangles.push_back(tri0);
-//	scene.triangles.push_back(tri1);
+	scene.triangles.push_back(tri0);
+	scene.triangles.push_back(tri1);
 	
 	// +Y
-//	scene.triangles.push_back(tri2);
-//	scene.triangles.push_back(tri3);
+	scene.triangles.push_back(tri2);
+	scene.triangles.push_back(tri3);
 
 	// +X
-//	scene.triangles.push_back(tri4);
-//	scene.triangles.push_back(tri5);
+	scene.triangles.push_back(tri4);
+	scene.triangles.push_back(tri5);
 
 	// -X
-//	scene.triangles.push_back(tri6);
+	scene.triangles.push_back(tri6);
 	scene.triangles.push_back(tri7);
 
 	// -Z
