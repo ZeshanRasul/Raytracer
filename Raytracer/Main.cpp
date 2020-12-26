@@ -291,7 +291,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			// normalA.x * alpha2 etc
 			hitObjectNormal = normalize((alpha2 * scene.triangles[i].normalA) + (beta2 * scene.triangles[i].normalB) + (gamma2 * scene.triangles[i].normalC));
 
-			intersectionPoint = ray.origin + ray.direction * tTriangle;
+		//	intersectionPoint = ray.origin + ray.direction * tTriangle;
 
 			minDist = tTriangle;
 			didHit = true;
@@ -302,7 +302,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	
 	if (didHit == true)
 	{
-	//	intersectionPoint = ray.origin + ray.direction * t;
+		intersectionPoint = ray.origin + ray.direction * t;
 	}
 
 	// Calculate intersection point
@@ -476,17 +476,17 @@ int main()
 	scene.triangles.push_back(tri4);
 	scene.triangles.push_back(tri5);
 
+	*/
 	// -X
 	scene.triangles.push_back(tri6);
 	scene.triangles.push_back(tri7);
-	*/
 	// -Z
 	scene.triangles.push_back(tri8);
 	scene.triangles.push_back(tri9);
 
 	// +Z
-//	scene.triangles.push_back(tri10);
-//	scene.triangles.push_back(tri11);
+	scene.triangles.push_back(tri10);
+	scene.triangles.push_back(tri11);
 	
 
 	Triangle triangle0(vec3(0, 0.2, -0.33f), vec3(0.33, 0.0f, -0.33f), vec3(0.33, 0.2, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
@@ -516,6 +516,9 @@ int main()
 
 	DirectionalLight lightDir4(vec3(0, -1, 0), vec3(1.0f, 1.0f, 1.0f));
 //	scene.dirLights.push_back(lightDir4);
+
+	DirectionalLight lightDir5(vec3(3, 0, 0), vec3(0.0f, 0.6f, 0.7f));
+	scene.dirLights.push_back(lightDir5);
 
 
 
