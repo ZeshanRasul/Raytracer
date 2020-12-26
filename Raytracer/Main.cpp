@@ -157,7 +157,9 @@ float CheckSphereIntersection(Sphere sphere, Ray ray)
 float CheckTriangleIntersection(Triangle triangle, Ray ray)
 {
 	// Find plane normal
-	triangle.normal = normalize(cross((triangle.vertex2 - triangle.vertex0), (triangle.vertex1 - triangle.vertex0)));
+	vec3 normalA = normalize(cross((triangle.vertex2 - triangle.vertex0), (triangle.vertex1 - triangle.vertex0)));
+	vec3 normalB = normalize(cross((triangle.vertex0 - triangle.vertex1), (triangle.vertex2 - triangle.vertex1)));
+	vec3 normalC = normalize(cross((triangle.vertex1 - triangle.vertex2), (triangle.vertex0 - triangle.vertex2)));
 	/*
 	// Find point on Ray Plane intersection
 	float t = (dot(triangle.vertex0, triangle.normal) - dot(ray.origin, triangle.normal)) / dot(ray.direction, triangle.normal);
@@ -176,7 +178,7 @@ float CheckTriangleIntersection(Triangle triangle, Ray ray)
 		return t;
 	}
 	*/
-
+	
 	vec3 e1 = triangle.vertex1 - triangle.vertex0;
 	vec3 e2 = triangle.vertex2 - triangle.vertex0;
 	vec3 s = ray.origin - triangle.vertex0;
@@ -188,13 +190,35 @@ float CheckTriangleIntersection(Triangle triangle, Ray ray)
 	float t = tBetaGamma.x;
 	float beta = tBetaGamma.y;
 	float gamma = tBetaGamma.z;
+	float alpha = 1 - beta - gamma;
+	
+
+	vec3 q = ray.origin + (t * ray.direction);
+	
+	vec3 bMinusA = triangle.vertex1 - triangle.vertex0;
+	vec3 cMinusA = triangle.vertex2 - triangle.vertex0;
+	
+	vec3 cMinusB = triangle.vertex2 - triangle.vertex1;
+	vec3 qMinusB = q - triangle.vertex1;
+	
+	vec3 aMinusC = triangle.vertex0 - triangle.vertex2;
+	vec3 qMinusC = q - triangle.vertex2;
+
+	vec3 qMinusA = q - triangle.vertex0;
+
+	float denominator = (dot(cross(bMinusA, cMinusA), normalA));
+
+	float alpha2 = (dot(cross(cMinusB, qMinusB), normalA)) / denominator;
+	float beta2 = (dot(cross(aMinusC, qMinusC), normalA)) / denominator;
+	float gamma2 = (dot(cross(bMinusA, qMinusA), normalA)) / denominator;
 
 	if (beta < 0 || gamma < 0 || beta + gamma > 1)
 	{
 		t = INFINITY;
 		return t;
 	}
-
+	
+	triangle.SetNormal(normalize((alpha2 * normalA) + (beta2 * normalB) + (gamma2 * normalC)));
 	return t;
 }
 
@@ -255,7 +279,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectEmission = scene.triangles[i].emission;
 			hitObjectAmbient = scene.triangles[i].ambient;
 			hitObjectShininess = scene.triangles[i].shininess;
-			hitObjectNormal = normalize(cross((scene.triangles[i].vertex2 - scene.triangles[i].vertex0), (scene.triangles[i].vertex1 - scene.triangles[i].vertex0)));
+			hitObjectNormal = scene.triangles[i].normal;
 
 			minDist = tTriangle;
 			didHit = true;
@@ -452,8 +476,8 @@ int main()
 	DirectionalLight lightDir(vec3(3, 0, 3), vec3(0.0f, 0.6f, 0.7f));
 	scene.dirLights.push_back(lightDir);
 
-	DirectionalLight lightDir1(vec3(-1, -2, -3), vec3(1.0f, 1.0f, 1.0f));
-//	scene.dirLights.push_back(lightDir1);
+	DirectionalLight lightDir1(vec3(0, 2, 0), vec3(1.0f, 1.0f, 1.0f));
+	scene.dirLights.push_back(lightDir1);
 
 	DirectionalLight lightDir2(vec3(1, 0, 0), vec3(0.0f, 0.6f, 0.7f));
 //	scene.dirLights.push_back(lightDir2);
