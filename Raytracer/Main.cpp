@@ -209,14 +209,14 @@ vec3 CheckTriangleIntersection(Triangle triangle, Ray ray)
 	float beta2 = (dot(cross(aMinusC, qMinusC), triangle.normalA)) / denominator;
 	float gamma2 = (dot(cross(bMinusA, qMinusA), triangle.normalA)) / denominator;
 
-	if (beta2 < 0 || gamma2 < 0 || beta2 + gamma2 > 1)
+	if (beta2 < 0 || gamma2 < 0 || beta2 + gamma2 > 1 || beta2 > 1 || gamma2 > 1)
 	{
-		t = INFINITY;
+		//t = INFINITY;
 		vec3 nullT(INFINITY, 0, 0);
 		return nullT;
 	}
 	
-	vec3 tBetaGamma2(t, beta2, gamma2);
+	vec3 tBetaGamma2(t, beta, gamma);
 
 	triangle.SetNormal(normalize((alpha2 * triangle.normalA) + (beta2 * triangle.normalB) + (gamma2 * triangle.normalC)));
 	return tBetaGamma2;
@@ -291,7 +291,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			// normalA.x * alpha2 etc
 			hitObjectNormal = normalize((alpha2 * scene.triangles[i].normalA) + (beta2 * scene.triangles[i].normalB) + (gamma2 * scene.triangles[i].normalC));
 
-		//	intersectionPoint = ray.origin + ray.direction * tTriangle;
+			intersectionPoint = ray.origin + ray.direction * tTriangle;
 
 			minDist = tTriangle;
 			didHit = true;
@@ -474,9 +474,9 @@ int main()
 
 	// +X
 	scene.triangles.push_back(tri4);
+	*/
 	scene.triangles.push_back(tri5);
 
-	*/
 	// -X
 	scene.triangles.push_back(tri6);
 	scene.triangles.push_back(tri7);
