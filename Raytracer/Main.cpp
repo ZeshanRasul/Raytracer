@@ -463,7 +463,7 @@ int main()
 	Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
 	Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
 
-	
+	/*
 	// -Y
 	scene.triangles.push_back(tri0);
 	scene.triangles.push_back(tri1);
@@ -479,14 +479,14 @@ int main()
 	// -X
 	scene.triangles.push_back(tri6);
 	scene.triangles.push_back(tri7);
-
+	*/
 	// -Z
 	scene.triangles.push_back(tri8);
 	scene.triangles.push_back(tri9);
 
 	// +Z
-	scene.triangles.push_back(tri10);
-	scene.triangles.push_back(tri11);
+//	scene.triangles.push_back(tri10);
+//	scene.triangles.push_back(tri11);
 	
 
 	Triangle triangle0(vec3(0, 0.2, -0.33f), vec3(0.33, 0.0f, -0.33f), vec3(0.33, 0.2, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
