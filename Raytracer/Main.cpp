@@ -243,6 +243,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	vec3 hitObjectNormal = vec3(0, 0, 0);
 	float hitObjectShininess = 0.0f;
 	vec3 tBetaGamma2;
+	vec3 intersectionPoint(INFINITY, INFINITY, INFINITY);
 
 
 	for (int i = 0; i < scene.spheres.size(); i++)
@@ -259,9 +260,11 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectShininess = scene.spheres[i].shininess;
 			hitObjectNormal = normalize((ray.origin + ray.direction * tSphere) - scene.spheres[i].center);
 
+			intersectionPoint = ray.origin + ray.direction * tSphere;
+
 			minDist = tSphere;
 			didHit = true;
-
+			t = tSphere;
 		}
 	
 	}
@@ -284,21 +287,25 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectEmission = scene.triangles[i].emission;
 			hitObjectAmbient = scene.triangles[i].ambient;
 			hitObjectShininess = scene.triangles[i].shininess;
+
+			// normalA.x * alpha2 etc
 			hitObjectNormal = normalize((alpha2 * scene.triangles[i].normalA) + (beta2 * scene.triangles[i].normalB) + (gamma2 * scene.triangles[i].normalC));
+
+			intersectionPoint = ray.origin + ray.direction * tTriangle;
 
 			minDist = tTriangle;
 			didHit = true;
+			t = tTriangle;
 
 		}
 	}
 	
 	if (didHit == true)
 	{
-		tSphere < tTriangle ? t = tSphere : t = tTriangle;
+	//	intersectionPoint = ray.origin + ray.direction * t;
 	}
 
 	// Calculate intersection point
-	vec3 intersectionPoint = ray.origin + ray.direction * t;
 
 	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient, hitObjectNormal);
 }
@@ -344,7 +351,7 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 	float nDotH = dot(normal, halfVec);
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
-	return finalColour = lambert;
+	return finalColour = lambert + phong;
 	// + phong triangle doesn't have shading on one side with phong shading.
 }
 
@@ -429,19 +436,19 @@ int main()
 	vec3 vert6(+triWidth + triCenter, +triHeight + triCenter, +triDepth + triCenter);
 	vec3 vert7(+triWidth + triCenter, -triHeight + triCenter, +triDepth + triCenter);
 
-	Triangle tri0(vert0, vert3, vert7, vec3(1.0f, 0.0f, 1.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
-	Triangle tri1(vert0, vert7, vert4, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri2(vert1, vert5, vert6, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri3(vert1, vert6, vert2, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri4(vert3, vert2, vert6, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri5(vert3, vert6, vert7, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri6(vert0, vert5, vert1, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri7(vert0, vert4, vert5, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri0(vert0, vert3, vert7, vec3(1.0f, 0.0f, 1.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 1.0f, vec3(0.1, 0.1, 0.1));
+	Triangle tri1(vert0, vert7, vert4, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri2(vert1, vert5, vert6, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri3(vert1, vert6, vert2, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri4(vert3, vert2, vert6, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri5(vert3, vert6, vert7, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri6(vert0, vert5, vert1, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri7(vert0, vert4, vert5, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
 
-	Triangle tri8(vert0, vert1, vert2, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri9(vert0, vert2, vert3, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 0.01f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri8(vert0, vert1, vert2, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri9(vert0, vert2, vert3, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
 
 	// -Y
 	scene.triangles.push_back(tri0);
@@ -484,7 +491,7 @@ int main()
 	scene.dirLights.push_back(lightDir);
 
 	DirectionalLight lightDir1(vec3(0, 2, 0), vec3(1.0f, 1.0f, 1.0f));
-	scene.dirLights.push_back(lightDir1);
+//	scene.dirLights.push_back(lightDir1);
 
 	DirectionalLight lightDir2(vec3(1, 0, 0), vec3(0.0f, 0.6f, 0.7f));
 //	scene.dirLights.push_back(lightDir2);
