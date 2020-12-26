@@ -390,11 +390,12 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 		{
 			Ray ray = ShootShadowRay(intersection, normalize(scene.dirLights[i].direction));
 			Intersection shadowIntersection = FindIntersection(scene, ray);
-			if (shadowIntersection.didHit != true)
-			{
 				vec3 colour = ComputeDirectionalLighting(intersection, scene.dirLights[i], camera);
 				col2 = col2 + colour;
+			if (shadowIntersection.didHit != true)
+			{
 			}
+
 		}
 
 		return finalColour = finalColour + col1 + col2 + intersection.hitObjectAmbient + intersection.hitObjectEmission;
@@ -464,6 +465,7 @@ int main()
 	Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
 
 	/*
+	*/
 	// -Y
 	scene.triangles.push_back(tri0);
 	scene.triangles.push_back(tri1);
@@ -474,7 +476,6 @@ int main()
 
 	// +X
 	scene.triangles.push_back(tri4);
-	*/
 	scene.triangles.push_back(tri5);
 
 	// -X
@@ -505,11 +506,11 @@ int main()
 	DirectionalLight lightDir(vec3(3, 0, 3), vec3(0.0f, 0.6f, 0.7f));
 	scene.dirLights.push_back(lightDir);
 
-	DirectionalLight lightDir1(vec3(-1, 0, 1), vec3(0.6f, 0.6f, 0.6f));
-//	scene.dirLights.push_back(lightDir1);
+	DirectionalLight lightDir1(vec3(-3, 0, 0), vec3(0.6f, 0.6f, 0.6f));
+	scene.dirLights.push_back(lightDir1);
 
-	DirectionalLight lightDir2(vec3(0, 0, 1), vec3(0.6f, 0.6f, 0.6f));
-//	scene.dirLights.push_back(lightDir2);
+	DirectionalLight lightDir2(vec3(0, 0, -3), vec3(0.6f, 0.6f, 0.6f));
+	scene.dirLights.push_back(lightDir2);
 
 	DirectionalLight lightDir3(vec3(3, -3, -3), vec3(1.0f, 1.0f, 1.0f));
 //	scene.dirLights.push_back(lightDir3);
