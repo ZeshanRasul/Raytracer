@@ -339,17 +339,29 @@ vec3 ComputePointLighting(Intersection intersection, PointLight light, Camera ca
 
 vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight light, Camera camera)
 {
-	vec3 normal = normalize(intersection.hitObjectNormal);
+//	vec3 normal = normalize(intersection.hitObjectNormal);
 	vec3 finalColour;
 	vec3 eyeDirection = normalize(camera.eyePos - intersection.intersectionPoint);
 	vec3 normalizedLightDirection = normalize(light.direction);
-	float nDotL = dot(normal, normalizedLightDirection);
+	float nDotL = dot(intersection.hitObjectNormal, normalizedLightDirection);
 	// No attenuation for now
 	vec3 lambert = intersection.hitObjectDiffuse * light.colour * max(nDotL, 0.0f);
 
-	vec3 halfVec = normalize(normalize(light.direction) + eyeDirection);
-	float nDotH = dot(normal, halfVec);
+	vec3 halfVec = normalize(normalizedLightDirection + eyeDirection);
+	float nDotH = dot(intersection.hitObjectNormal, halfVec);
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
+
+	/*
+	if (phong.x > 0 || phong.y > 0 || phong.z > 0)
+	{
+		phong = phong + vec3(0, 0, 0);
+	}
+
+	if (nDotH > 0)
+	{
+		nDotH = nDotH + 0;
+	}
+	*/
 
 	return finalColour = lambert + phong;
 	// + phong triangle doesn't have shading on one side with phong shading.
@@ -401,6 +413,7 @@ int main()
 	std::string outputFilename = "Raytracer.png";
 
 	vec3 eyePosition = vec3(-3, 0, -3);
+	//vec3 eyePosition = vec3(0, 0, -1);
 	vec3 center = vec3(0, 0, 0);
 	vec3 up = vec3(0, 1, 0);
 	float fovY = radians(60.0f);
@@ -410,7 +423,7 @@ int main()
 	// Create new Scene and add Sphere and then Triangle
 	Scene scene;
 
-	Sphere sphere0(vec3(0.0f, 0.0f, 0.0f), 0.25f, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
+	Sphere sphere0(vec3(0.0f, 0.0f, 0.0f), 0.25f, vec3(1.0f, 1.0f, 0.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 1.0f, vec3(0.1, 0.1, 0.1));
 
 	Sphere sphere1(vec3(-0.33f, -0.33f, 0.0f), 0.18f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
 
@@ -450,6 +463,7 @@ int main()
 	Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
 	Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
 
+	
 	// -Y
 	scene.triangles.push_back(tri0);
 	scene.triangles.push_back(tri1);
@@ -474,6 +488,7 @@ int main()
 	scene.triangles.push_back(tri10);
 	scene.triangles.push_back(tri11);
 	
+
 	Triangle triangle0(vec3(0, 0.2, -0.33f), vec3(0.33, 0.0f, -0.33f), vec3(0.33, 0.2, -0.33f), vec3(0.619f, 0.27f, 0.619f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.01f, vec3(0.1, 0.1, 0.1));
 //	scene.triangles.push_back(triangle0);
 
@@ -490,13 +505,13 @@ int main()
 	DirectionalLight lightDir(vec3(3, 0, 3), vec3(0.0f, 0.6f, 0.7f));
 	scene.dirLights.push_back(lightDir);
 
-	DirectionalLight lightDir1(vec3(0, 2, 0), vec3(1.0f, 1.0f, 1.0f));
+	DirectionalLight lightDir1(vec3(-1, 0, 1), vec3(0.6f, 0.6f, 0.6f));
 //	scene.dirLights.push_back(lightDir1);
 
-	DirectionalLight lightDir2(vec3(1, 0, 0), vec3(0.0f, 0.6f, 0.7f));
+	DirectionalLight lightDir2(vec3(0, 0, 1), vec3(0.6f, 0.6f, 0.6f));
 //	scene.dirLights.push_back(lightDir2);
 
-	DirectionalLight lightDir3(vec3(0, 1, 0), vec3(1.0f, 1.0f, 1.0f));
+	DirectionalLight lightDir3(vec3(3, -3, -3), vec3(1.0f, 1.0f, 1.0f));
 //	scene.dirLights.push_back(lightDir3);
 
 	DirectionalLight lightDir4(vec3(0, -1, 0), vec3(1.0f, 1.0f, 1.0f));
