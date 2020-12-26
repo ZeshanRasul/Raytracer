@@ -154,7 +154,7 @@ float CheckSphereIntersection(Sphere sphere, Ray ray)
 
 }
 
-float CheckTriangleIntersection(Triangle triangle, Ray ray)
+vec3 CheckTriangleIntersection(Triangle triangle, Ray ray)
 {
 	// Find plane normal
 	/*
@@ -212,11 +212,14 @@ float CheckTriangleIntersection(Triangle triangle, Ray ray)
 	if (beta2 < 0 || gamma2 < 0 || beta2 + gamma2 > 1)
 	{
 		t = INFINITY;
-		return t;
+		vec3 nullT(INFINITY, 0, 0);
+		return nullT;
 	}
 	
+	vec3 tBetaGamma2(t, beta2, gamma2);
+
 	triangle.SetNormal(normalize((alpha2 * triangle.normalA) + (beta2 * triangle.normalB) + (gamma2 * triangle.normalC)));
-	return t;
+	return tBetaGamma2;
 }
 
 Intersection FindIntersection(Scene scene, Ray ray)
@@ -239,6 +242,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	vec3 hitObjectAmbient = vec3(0, 0, 0);
 	vec3 hitObjectNormal = vec3(0, 0, 0);
 	float hitObjectShininess = 0.0f;
+	vec3 tBetaGamma2;
 
 
 	for (int i = 0; i < scene.spheres.size(); i++)
@@ -266,7 +270,11 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	
 	for (int i = 0; i < scene.triangles.size(); i++)
 	{
-		tTriangle = CheckTriangleIntersection(scene.triangles[i], ray);
+		tBetaGamma2 = CheckTriangleIntersection(scene.triangles[i], ray);
+		tTriangle = tBetaGamma2.x;
+		float beta2 = tBetaGamma2.y;
+		float gamma2 = tBetaGamma2.z;
+		float alpha2 = 1 - beta2 - gamma2;
 
 		if (tTriangle < minDist && tTriangle > 0)
 		{
@@ -276,7 +284,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectEmission = scene.triangles[i].emission;
 			hitObjectAmbient = scene.triangles[i].ambient;
 			hitObjectShininess = scene.triangles[i].shininess;
-			hitObjectNormal = normalize(cross((scene.triangles[i].vertex2 - scene.triangles[i].vertex0), (scene.triangles[i].vertex1 - scene.triangles[i].vertex0)));
+			hitObjectNormal = normalize((alpha2 * scene.triangles[i].normalA) + (beta2 * scene.triangles[i].normalB) + (gamma2 * scene.triangles[i].normalC));
 
 			minDist = tTriangle;
 			didHit = true;
@@ -324,18 +332,19 @@ vec3 ComputePointLighting(Intersection intersection, PointLight light, Camera ca
 
 vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight light, Camera camera)
 {
+	vec3 normal = normalize(intersection.hitObjectNormal);
 	vec3 finalColour;
 	vec3 eyeDirection = normalize(camera.eyePos - intersection.intersectionPoint);
 	vec3 normalizedLightDirection = normalize(light.direction);
-	float nDotL = dot(intersection.hitObjectNormal, normalizedLightDirection);
+	float nDotL = dot(normal, normalizedLightDirection);
 	// No attenuation for now
 	vec3 lambert = intersection.hitObjectDiffuse * light.colour * max(nDotL, 0.0f);
 
 	vec3 halfVec = normalize(normalize(light.direction) + eyeDirection);
-	float nDotH = dot(intersection.hitObjectNormal, halfVec);
+	float nDotH = dot(normal, halfVec);
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
-	return finalColour = lambert + phong;
+	return finalColour = lambert;
 	// + phong triangle doesn't have shading on one side with phong shading.
 }
 
