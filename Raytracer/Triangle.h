@@ -17,6 +17,7 @@ public:
 		emission(emission),
 		shininess(shininess),
 		ambient(ambient)
+
 	{}
 
 	Triangle()
@@ -27,7 +28,11 @@ public:
 		normal = newNormal;
 	}
 
+
 	vec3 vertex0, vertex1, vertex2;
+	vec3 normalA = normalize(cross((vertex2 - vertex0), (vertex1 - vertex0)));
+	vec3 normalB = normalize(cross((vertex0 - vertex1), (vertex2 - vertex1)));
+	vec3 normalC = normalize(cross((vertex1 - vertex2), (vertex0 - vertex2)));
 	vec3 normal;
 	vec3 diffuse, specular, emission, ambient;
 	float shininess;
