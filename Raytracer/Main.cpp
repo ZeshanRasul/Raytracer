@@ -313,7 +313,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 Ray ShootShadowRay(Intersection intersection, vec3 lightDirection)
 {
 
-	vec3 direction =  lightDirection;
+	vec3 direction =  -normalize(lightDirection);
 	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
 
 	Ray ray(origin, direction);
@@ -371,7 +371,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 {
 	if (intersection.didHit == true)
 	{
-		vec3 finalColour(0, 0, 0);
+		vec3 finalColour(0, 0, 0); 
 		vec3 col1(0, 0, 0);
 		vec3 col2(0, 0, 0);
 
@@ -388,12 +388,12 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 
 		for (int i = 0; i < scene.dirLights.size(); i++)
 		{
-			Ray ray = ShootShadowRay(intersection, normalize(scene.dirLights[i].direction));
+			Ray ray = ShootShadowRay(intersection, scene.dirLights[i].direction);
 			Intersection shadowIntersection = FindIntersection(scene, ray);
-				vec3 colour = ComputeDirectionalLighting(intersection, scene.dirLights[i], camera);
-				col2 = col2 + colour;
 			if (shadowIntersection.didHit != true)
 			{
+				vec3 colour = ComputeDirectionalLighting(intersection, scene.dirLights[i], camera);
+				col2 = col2 + colour;
 			}
 
 		}
@@ -465,7 +465,6 @@ int main()
 	Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
 
 	/*
-	*/
 	// -Y
 	scene.triangles.push_back(tri0);
 	scene.triangles.push_back(tri1);
@@ -476,6 +475,7 @@ int main()
 
 	// +X
 	scene.triangles.push_back(tri4);
+	*/
 	scene.triangles.push_back(tri5);
 
 	// -X
