@@ -445,7 +445,7 @@ int main()
 	if (viewMode == "sphere")
 	{
 	}
-		eyePosition = vec3(1, 0, 1);
+		eyePosition = vec3(0, -1, 6);
 	if (viewMode == "cube")
 	{
 		eyePosition = vec3(3, 0, 3);
@@ -463,9 +463,9 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		Sphere sphere0(vec3(0.0f, -0.33f, 0.0f), 0.25f, vec3(1.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 5.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere0(vec3(0.0f, -1.90f, 0.0f), 0.5f, vec3(0.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 5.0f, vec3(0.1, 0.1, 0.1));
 		scene.spheres.push_back(sphere0);
-		DirectionalLight lightDir8(vec3(0, 0, -1), vec3(0.5f, 0.5f, 0.5f));
+		DirectionalLight lightDir8(vec3(-1, 1, -1), vec3(0.5f, 0.5f, 0.5f));
 		scene.dirLights.push_back(lightDir8);
 		DirectionalLight lightDir9(vec3(0, 0, 1), vec3(0.5f, 0.5f, 0.5f));
 	//	scene.dirLights.push_back(lightDir8);
@@ -475,19 +475,19 @@ int main()
 		DirectionalLight lightDir2(vec3(1, 0, 1), vec3(0.0f, 0.6f, 0.7f));
 	//	scene.dirLights.push_back(lightDir2);
 
-		float triWidth = 0.2f;
+		float triWidth = 2.0f;
 		float triHeight = 0.2f;
-		float triDepth = 0.2f;
+		float triDepth = 1.0f;
 		float triCenter = 0.2f;
 
-		vec3 vert0(-triWidth + triCenter, -triHeight + triCenter, -triDepth + triCenter);
-		vec3 vert1(-triWidth + triCenter, +triHeight + triCenter, -triDepth + triCenter);
-		vec3 vert2(+triWidth + triCenter, +triHeight + triCenter, -triDepth + triCenter);
-		vec3 vert3(+triWidth + triCenter, -triHeight + triCenter, -triDepth + triCenter);
-		vec3 vert4(-triWidth + triCenter, -triHeight + triCenter, +triDepth + triCenter);
-		vec3 vert5(-triWidth + triCenter, +triHeight + triCenter, +triDepth + triCenter);
-		vec3 vert6(+triWidth + triCenter, +triHeight + triCenter, +triDepth + triCenter);
-		vec3 vert7(+triWidth + triCenter, -triHeight + triCenter, +triDepth + triCenter);
+		vec3 vert0(-triWidth , -triHeight, -triDepth );
+		vec3 vert1(-triWidth , +triHeight, -triDepth );
+		vec3 vert2(+triWidth , +triHeight, -triDepth );
+		vec3 vert3(+triWidth , -triHeight, -triDepth );
+		vec3 vert4(-triWidth , -triHeight, +triDepth );
+		vec3 vert5(-triWidth , +triHeight, +triDepth );
+		vec3 vert6(+triWidth , +triHeight, +triDepth );
+		vec3 vert7(+triWidth , -triHeight, +triDepth );
 
 		Triangle tri0(vert0, vert3, vert7, vec3(1.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1, 0.1, 0.1));
 		Triangle tri1(vert0, vert7, vert4, vec3(1.0f, 0.0f, 0.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
@@ -503,7 +503,7 @@ int main()
 		Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 0.0f, 0.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
 		Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 0.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
 
-
+		
 		// -Y
 		scene.triangles.push_back(tri0);
 		scene.triangles.push_back(tri1);
@@ -526,7 +526,7 @@ int main()
 		// +Z
 		scene.triangles.push_back(tri10);
 		scene.triangles.push_back(tri11);
-
+		
 	}
 
 	Sphere sphere1(vec3(-0.33f, -0.33f, 0.0f), 0.18f, vec3(0.67, 0.33, 0.93), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 0.00f, vec3(0.1, 0.1, 0.1));
