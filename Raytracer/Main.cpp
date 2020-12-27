@@ -247,6 +247,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	vec3 tBetaGamma2;
 	vec3 intersectionPoint(INFINITY, INFINITY, INFINITY);
 	vec3 center;
+	bool hitObjectIsSphere = false;
 
 	for (int i = 0; i < scene.spheres.size(); i++)
 	{
@@ -261,6 +262,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectAmbient = scene.spheres[i].ambient;
 			hitObjectShininess = scene.spheres[i].shininess;
 //			hitObjectNormal = normalize((ray.origin + ray.direction * tSphere) - scene.spheres[i].center);
+			hitObjectIsSphere = true;
 
 			center = scene.spheres[i].center;
 			intersectionPoint = ray.origin + ray.direction * tSphere;
@@ -270,7 +272,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			t = tSphere;
 		}
 
-		hitObjectNormal = -normalize((ray.origin + (ray.direction * t)) - center);
+		hitObjectNormal = normalize((ray.origin + (ray.direction * t)) - center);
 	}
 
 	// Same loop as above for triangles
@@ -291,6 +293,8 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectEmission = scene.triangles[i].emission;
 			hitObjectAmbient = scene.triangles[i].ambient;
 			hitObjectShininess = scene.triangles[i].shininess;
+			hitObjectIsSphere = false;
+
 
 			// normalA.x * alpha2 etc
 			hitObjectNormal = normalize((alpha2 * scene.triangles[i].normalA) + (beta2 * scene.triangles[i].normalB) + (gamma2 * scene.triangles[i].normalC));
@@ -312,7 +316,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 
 	// Calculate intersection point
 
-	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient, hitObjectNormal);
+	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient, hitObjectNormal, hitObjectIsSphere);
 }
 
 Ray ShootShadowRay(Intersection intersection, vec3 lightDirection)
@@ -352,6 +356,7 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 {
 //	vec3 normal = normalize(intersection.hitObjectNormal);
 	vec3 finalColour;
+	float nDotH;
 	vec3 eyeDirection = normalize(camera.eyePos - intersection.intersectionPoint);
 	vec3 normalizedLightDirection = normalize(light.direction);
 	float nDotL = dot(intersection.hitObjectNormal, normalizedLightDirection);
@@ -359,7 +364,14 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 	vec3 lambert = intersection.hitObjectDiffuse * light.colour * max(nDotL, 0.0f);
 
 	vec3 halfVec = normalize(normalizedLightDirection + eyeDirection);
-	float nDotH = dot(intersection.hitObjectNormal, halfVec);
+	if (intersection.hitObjectIsSphere)
+	{
+		nDotH = dot(intersection.hitObjectNormal, -halfVec);
+	}
+	else
+	{
+		nDotH = dot(intersection.hitObjectNormal, halfVec);
+	}
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
 	if (phong.x > 0 || phong.y > 0 || phong.z > 0)
@@ -432,8 +444,8 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		eyePosition = vec3(0, 0, 1);
 	}
+		eyePosition = vec3(1, 0, 0);
 	if (viewMode == "cube")
 	{
 		eyePosition = vec3(3, 0, 3);
@@ -451,9 +463,9 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		Sphere sphere0(vec3(0.0f, 0.0f, 0.0f), 0.25f, vec3(1.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere0(vec3(0.0f, 0.0f, 0.0f), 0.25f, vec3(1.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 5.0f, vec3(0.1, 0.1, 0.1));
 		scene.spheres.push_back(sphere0);
-		DirectionalLight lightDir8(vec3(1, 0, 0), vec3(0.5f, 0.5f, 0.5f));
+		DirectionalLight lightDir8(vec3(0, 0, -1), vec3(0.5f, 0.5f, 0.5f));
 		scene.dirLights.push_back(lightDir8);
 		DirectionalLight lightDir9(vec3(-1, 0, 0), vec3(0.5f, 0.5f, 0.5f));
 	//	scene.dirLights.push_back(lightDir8);

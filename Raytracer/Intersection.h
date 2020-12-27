@@ -13,7 +13,8 @@ public:
 		vec3 hitObjectEmission,
 		float hitObjectShininess,
 		vec3 hitObjectAmbient,
-		vec3 hitObjectNormal)
+		vec3 hitObjectNormal,
+		bool hitObjectIsSphere)
 		:
 		didHit(didHit),
 		intersectionPoint(intersectionPoint),
@@ -22,7 +23,8 @@ public:
 		hitObjectEmission(hitObjectEmission),
 		hitObjectShininess(hitObjectShininess),
 		hitObjectAmbient(hitObjectAmbient),
-		hitObjectNormal(hitObjectNormal)
+		hitObjectNormal(hitObjectNormal),
+		hitObjectIsSphere(hitObjectIsSphere)
 	{		
 	}
 
@@ -38,4 +40,5 @@ public:
 	vec3 hitObjectAmbient;
 	float hitObjectShininess;
 	vec3 hitObjectNormal;
+	bool hitObjectIsSphere;
 };
