@@ -246,7 +246,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	float hitObjectShininess = 0.0f;
 	vec3 tBetaGamma2;
 	vec3 intersectionPoint(INFINITY, INFINITY, INFINITY);
-
+	vec3 center;
 
 	for (int i = 0; i < scene.spheres.size(); i++)
 	{
@@ -260,14 +260,17 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectEmission = scene.spheres[i].emission;
 			hitObjectAmbient = scene.spheres[i].ambient;
 			hitObjectShininess = scene.spheres[i].shininess;
-			hitObjectNormal = normalize((ray.origin + ray.direction * tSphere) - scene.spheres[i].center);
+//			hitObjectNormal = normalize((ray.origin + ray.direction * tSphere) - scene.spheres[i].center);
 
+			center = scene.spheres[i].center;
 			intersectionPoint = ray.origin + ray.direction * tSphere;
 
 			minDist = tSphere;
 			didHit = true;
 			t = tSphere;
 		}
+
+		hitObjectNormal = normalize((ray.origin + (ray.direction * t)) - center);
 	}
 
 	// Same loop as above for triangles
@@ -445,7 +448,11 @@ int main()
 		Sphere sphere0(vec3(0.0f, 0.0f, 0.0f), 0.25f, vec3(0.0f, 0.0f, 1.0f), vec3(1.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 1.0f, vec3(0.1, 0.1, 0.1));
 		scene.spheres.push_back(sphere0);
 		DirectionalLight lightDir8(vec3(1, 0, 0), vec3(0.0f, 0.6f, 0.7f));
-		scene.dirLights.push_back(lightDir8);
+	//	scene.dirLights.push_back(lightDir8);
+		PointLight spherePoint0(vec3(4, 0, 0), vec3(0.0f, 0.6f, 0.7f));
+		scene.pointLights.push_back(spherePoint0);
+		
+
 
 	}
 
