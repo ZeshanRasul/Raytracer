@@ -10,7 +10,7 @@
 
 std::vector <mat4> modelViewStack;
 
-std::string viewMode = "cube";
+std::string viewMode = "sphere";
 
 void pushMatrix(mat4 mat)
 {
@@ -414,7 +414,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 
 		}
 
-		return finalColour = finalColour + col1 + col2 + intersection.hitObjectAmbient + intersection.hitObjectEmission;
+		return finalColour = col1 + col2 + intersection.hitObjectAmbient + intersection.hitObjectEmission;
 	}
 	else
 	{
@@ -454,9 +454,9 @@ int main()
 		Sphere sphere0(vec3(0.0f, 0.0f, 0.0f), 0.25f, vec3(0.0f, 0.0f, 1.0f), vec3(1.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 1.0f, vec3(0.1, 0.1, 0.1));
 		scene.spheres.push_back(sphere0);
 		DirectionalLight lightDir8(vec3(1, 0, 0), vec3(0.0f, 0.6f, 0.7f));
-//		scene.dirLights.push_back(lightDir8);
+		scene.dirLights.push_back(lightDir8);
 		PointLight spherePoint0(vec3(4, 0, 0), vec3(0.0f, 0.6f, 0.7f));
-		scene.pointLights.push_back(spherePoint0);
+//		scene.pointLights.push_back(spherePoint0);
 		
 
 
@@ -549,8 +549,9 @@ int main()
 		DirectionalLight lightDir1(vec3(-3, 0, 0), vec3(0.6f, 0.6f, 0.6f));
 	//	scene.dirLights.push_back(lightDir1);
 
+		// Turn on
 		DirectionalLight lightDir2(vec3(0, 0, -3), vec3(0.0f, 0.6f, 0.7f));
-//		scene.dirLights.push_back(lightDir2);
+		scene.dirLights.push_back(lightDir2);
 
 		DirectionalLight lightDir3(vec3(0, 0, 3), vec3(0.0f, 0.6f, 0.7f));
 	//	scene.dirLights.push_back(lightDir3);
@@ -558,9 +559,10 @@ int main()
 		DirectionalLight lightDir4(vec3(-3, 0, -3), vec3(0.0f, 0.6f, 0.7f));
 	//	scene.dirLights.push_back(lightDir4);
 
+		// Turn on
 		// This light creates shadows on one face of the cube
 		DirectionalLight lightDir5(vec3(-3, 0, 0), vec3(0.0f, 0.6f, 0.7f));
-//		scene.dirLights.push_back(lightDir5);
+		scene.dirLights.push_back(lightDir5);
 
 		DirectionalLight lightDir6(vec3(3, 0, 0), vec3(0.0f, 0.6f, 0.7f));
 	//	scene.dirLights.push_back(lightDir6);
@@ -569,7 +571,7 @@ int main()
 	//	scene.dirLights.push_back(lightDir7);
 
 		PointLight cubePoint0(vec3(-4, 0, 0), vec3(0.0f, 0.6f, 0.7f));
-		scene.pointLights.push_back(cubePoint0);
+	//	scene.pointLights.push_back(cubePoint0);
 
 
 
