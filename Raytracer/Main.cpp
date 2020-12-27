@@ -10,7 +10,7 @@
 
 std::vector <mat4> modelViewStack;
 
-std::string viewMode = "sphere";
+std::string viewMode = "cube";
 
 void pushMatrix(mat4 mat)
 {
@@ -322,7 +322,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 Ray ShootShadowRay(Intersection intersection, vec3 lightDirection)
 {
 
-	vec3 direction =  -normalize(lightDirection);
+	vec3 direction =  normalize(lightDirection);
 	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
 
 	Ray ray(origin, direction);
@@ -357,21 +357,16 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 //	vec3 normal = normalize(intersection.hitObjectNormal);
 	vec3 finalColour;
 	float nDotH;
-	vec3 eyeDirection = normalize(camera.eyePos - intersection.intersectionPoint);
-	vec3 normalizedLightDirection = normalize(light.direction);
+	vec3 eyeDirection = -normalize(camera.eyePos - intersection.intersectionPoint);
+	vec3 normalizedLightDirection = -normalize(light.direction);
 	float nDotL = dot(intersection.hitObjectNormal, normalizedLightDirection);
 	// No attenuation for now
 	vec3 lambert = intersection.hitObjectDiffuse * light.colour * max(nDotL, 0.0f);
 
 	vec3 halfVec = normalize(normalizedLightDirection + eyeDirection);
-	if (intersection.hitObjectIsSphere)
-	{
-		nDotH = dot(intersection.hitObjectNormal, -halfVec);
-	}
-	else
-	{
-		nDotH = dot(intersection.hitObjectNormal, halfVec);
-	}
+
+	nDotH = dot(intersection.hitObjectNormal, halfVec);
+
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
 	if (phong.x > 0 || phong.y > 0 || phong.z > 0)
@@ -392,7 +387,6 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 		nDotH = nDotH + 0;
 	}
 	return finalColour = lambert + phong;
-	// + phong triangle doesn't have shading on one side with phong shading.
 }
 
 vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
@@ -565,7 +559,7 @@ int main()
 	//	scene.dirLights.push_back(lightDir1);
 
 		// Turn on
-		DirectionalLight lightDir2(vec3(0, 0, -3), vec3(0.0f, 0.6f, 0.7f));
+		DirectionalLight lightDir2(vec3(3, 0, 3), vec3(0.0f, 0.6f, 0.7f));
 		scene.dirLights.push_back(lightDir2);
 
 		DirectionalLight lightDir3(vec3(0, 0, 3), vec3(0.0f, 0.6f, 0.7f));
@@ -576,8 +570,8 @@ int main()
 
 		// Turn on
 		// This light creates shadows on one face of the cube
-		DirectionalLight lightDir5(vec3(-3, 0, 0), vec3(0.0f, 0.6f, 0.7f));
-		scene.dirLights.push_back(lightDir5);
+		DirectionalLight lightDir5(vec3(3, 0, 0), vec3(0.0f, 0.6f, 0.7f));
+	//	scene.dirLights.push_back(lightDir5);
 
 		DirectionalLight lightDir6(vec3(3, 0, 0), vec3(0.0f, 0.6f, 0.7f));
 	//	scene.dirLights.push_back(lightDir6);
