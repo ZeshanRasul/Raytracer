@@ -399,7 +399,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 
 		for (int i = 0; i < scene.pointLights.size(); i++)
 		{
-			Ray ray = ShootShadowRay(intersection, normalize(scene.pointLights[i].position - intersection.intersectionPoint));
+			Ray ray = ShootShadowRay(intersection, -normalize(scene.pointLights[i].position - intersection.intersectionPoint));
 			Intersection shadowIntersection = FindIntersection(scene, ray);
 			if (shadowIntersection.didHit != true)
 			{
@@ -464,8 +464,8 @@ int main()
 		DirectionalLight lightDir9(vec3(-1, 0, 0), vec3(0.5f, 0.5f, 0.5f));
 	//	scene.dirLights.push_back(lightDir8);
 
-		PointLight spherePoint0(vec3(4, 0, 0), vec3(0.0f, 0.6f, 0.7f));
-//		scene.pointLights.push_back(spherePoint0);
+		PointLight spherePoint0(vec3(-4, 0, -4), vec3(0.0f, 0.6f, 0.7f));
+		scene.pointLights.push_back(spherePoint0);
 		
 
 
@@ -580,7 +580,7 @@ int main()
 	//	scene.dirLights.push_back(lightDir7);
 
 		PointLight cubePoint0(vec3(-4, 0, 0), vec3(0.0f, 0.6f, 0.7f));
-	//	scene.pointLights.push_back(cubePoint0);
+		scene.pointLights.push_back(cubePoint0);
 
 
 
