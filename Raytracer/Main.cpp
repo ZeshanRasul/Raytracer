@@ -10,7 +10,7 @@
 
 std::vector <mat4> modelViewStack;
 
-std::string viewMode = "sphere";
+std::string viewMode = "cube";
 
 void pushMatrix(mat4 mat)
 {
@@ -339,6 +339,12 @@ vec3 ComputePointLighting(Intersection intersection, PointLight light, Camera ca
 	float nDotH = dot(intersection.hitObjectNormal, halfVec);
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
+	if (phong.x > 0 || phong.y > 0 || phong.z > 0)
+	{
+		phong = phong + vec3(0, 0, 0);
+	}
+
+
 	return finalColour = lambert + phong;
 }
 
@@ -448,7 +454,7 @@ int main()
 		Sphere sphere0(vec3(0.0f, 0.0f, 0.0f), 0.25f, vec3(0.0f, 0.0f, 1.0f), vec3(1.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 1.0f, vec3(0.1, 0.1, 0.1));
 		scene.spheres.push_back(sphere0);
 		DirectionalLight lightDir8(vec3(1, 0, 0), vec3(0.0f, 0.6f, 0.7f));
-	//	scene.dirLights.push_back(lightDir8);
+//		scene.dirLights.push_back(lightDir8);
 		PointLight spherePoint0(vec3(4, 0, 0), vec3(0.0f, 0.6f, 0.7f));
 		scene.pointLights.push_back(spherePoint0);
 		
@@ -544,7 +550,7 @@ int main()
 	//	scene.dirLights.push_back(lightDir1);
 
 		DirectionalLight lightDir2(vec3(0, 0, -3), vec3(0.0f, 0.6f, 0.7f));
-		scene.dirLights.push_back(lightDir2);
+//		scene.dirLights.push_back(lightDir2);
 
 		DirectionalLight lightDir3(vec3(0, 0, 3), vec3(0.0f, 0.6f, 0.7f));
 	//	scene.dirLights.push_back(lightDir3);
@@ -554,13 +560,17 @@ int main()
 
 		// This light creates shadows on one face of the cube
 		DirectionalLight lightDir5(vec3(-3, 0, 0), vec3(0.0f, 0.6f, 0.7f));
-		scene.dirLights.push_back(lightDir5);
+//		scene.dirLights.push_back(lightDir5);
 
 		DirectionalLight lightDir6(vec3(3, 0, 0), vec3(0.0f, 0.6f, 0.7f));
 	//	scene.dirLights.push_back(lightDir6);
 
 		DirectionalLight lightDir7(vec3(3, 0, 3), vec3(0.0f, 0.6f, 0.7f));
 	//	scene.dirLights.push_back(lightDir7);
+
+		PointLight cubePoint0(vec3(-4, 0, 0), vec3(0.0f, 0.6f, 0.7f));
+		scene.pointLights.push_back(cubePoint0);
+
 
 
 	}
