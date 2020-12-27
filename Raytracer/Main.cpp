@@ -352,18 +352,11 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 	float nDotH = dot(intersection.hitObjectNormal, halfVec);
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
-	/*
 	if (phong.x > 0 || phong.y > 0 || phong.z > 0)
 	{
 		phong = phong + vec3(0, 0, 0);
 	}
-
-	if (nDotH > 0)
-	{
-		nDotH = nDotH + 0;
-	}
-	*/
-
+	
 	return finalColour = lambert + phong;
 	// + phong triangle doesn't have shading on one side with phong shading.
 }
@@ -451,19 +444,19 @@ int main()
 	vec3 vert6(+triWidth + triCenter, +triHeight + triCenter, +triDepth + triCenter);
 	vec3 vert7(+triWidth + triCenter, -triHeight + triCenter, +triDepth + triCenter);
 
-	Triangle tri0(vert0, vert3, vert7, vec3(1.0f, 0.0f, 1.0f), vec3(0.15f, 0.15f, 0.15f), vec3(0.0f, 0.0f, 0.0f), 1.0f, vec3(0.1, 0.1, 0.1));
-	Triangle tri1(vert0, vert7, vert4, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri2(vert1, vert5, vert6, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri3(vert1, vert6, vert2, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri4(vert3, vert2, vert6, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri5(vert3, vert6, vert7, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri6(vert0, vert5, vert1, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri7(vert0, vert4, vert5, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri0(vert0, vert3, vert7, vec3(1.0f, 0.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 0.1f, vec3(0.1, 0.1, 0.1));
+	Triangle tri1(vert0, vert7, vert4, vec3(1.0f, 0.0f, 1.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 0.1f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri2(vert1, vert5, vert6, vec3(1.0f, 0.0f, 1.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 0.1f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri3(vert1, vert6, vert2, vec3(1.0f, 0.0f, 1.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 0.1f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri4(vert3, vert2, vert6, vec3(1.0f, 0.0f, 1.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 0.1f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri5(vert3, vert6, vert7, vec3(1.0f, 0.0f, 1.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 0.1f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri6(vert0, vert5, vert1, vec3(1.0f, 0.0f, 1.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 0.1f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri7(vert0, vert4, vert5, vec3(1.0f, 0.0f, 1.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 0.1f, vec3(0.1f, 0.1f, 0.1f));
 
-	Triangle tri8(vert0, vert1, vert2, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri9(vert0, vert2, vert3, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
-	Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 1.f), vec3(0.1f, 0.1f, 0.1f), vec3(0.15f, 0.05f, 0.0f), 1.0f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri8(vert0, vert1, vert2, vec3(1.0f, 0.0f, 1.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f),  0.1f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri9(vert0, vert2, vert3, vec3(1.0f, 0.0f, 1.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f),  0.1f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 0.0f, 1.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f),  0.1f, vec3(0.1f, 0.1f, 0.1f));
+	Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 1.f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f),  0.1f, vec3(0.1f, 0.1f, 0.1f));
 
 	/*
 	*/
@@ -514,14 +507,17 @@ int main()
 	scene.dirLights.push_back(lightDir2);
 
 	DirectionalLight lightDir3(vec3(0, 0, 3), vec3(0.0f, 0.6f, 0.7f));
-	scene.dirLights.push_back(lightDir3);
+//	scene.dirLights.push_back(lightDir3);
 
 	DirectionalLight lightDir4(vec3(-3, 0, -3), vec3(0.0f, 0.6f, 0.7f));
-	scene.dirLights.push_back(lightDir4);
+//	scene.dirLights.push_back(lightDir4);
 
 	// This light creates shadows on one face of the cube
-	DirectionalLight lightDir5(vec3(3, 0, 0), vec3(0.0f, 0.6f, 0.7f));
+	DirectionalLight lightDir5(vec3(-3, 0, 0), vec3(0.0f, 0.6f, 0.7f));
 	scene.dirLights.push_back(lightDir5);
+
+	DirectionalLight lightDir6(vec3(3, 0, 0), vec3(0.0f, 0.6f, 0.7f));
+//	scene.dirLights.push_back(lightDir6);
 
 
 
