@@ -319,6 +319,16 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient, hitObjectNormal, hitObjectIsSphere);
 }
 
+Ray ShootMirrorRay(Intersection intersection)
+{
+	vec3 direction = intersection.hitObjectNormal;
+	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
+
+	Ray ray(origin, direction);
+
+	return ray;
+}
+
 Ray ShootShadowRay(Intersection intersection, vec3 lightDirection)
 {
 
@@ -352,7 +362,9 @@ vec3 ComputePointLighting(Intersection intersection, PointLight light, Camera ca
 	return finalColour = lambert + phong;
 }
 
-vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight light, Camera camera)
+vec3 FindColour(Intersection intersection, Scene scene, Camera camera);
+
+vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight light, Camera camera, Scene scene)
 {
 //	vec3 normal = normalize(intersection.hitObjectNormal);
 	vec3 finalColour;
@@ -363,17 +375,18 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 	// No attenuation for now
 	vec3 lambert = intersection.hitObjectDiffuse * light.colour * max(nDotL, 0.0f);
 
-	if (intersection.hitObjectIsSphere)
-	{
-	}
-
 	vec3 halfVec = normalize(normalizedLightDirection + eyeDirection);
-
-	
 	
 	nDotH = dot(intersection.hitObjectNormal, halfVec);
 
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
+
+
+	Ray mirrorRay = ShootMirrorRay(intersection);
+	Intersection mirrorIntersection = FindIntersection(scene, mirrorRay);
+	vec3 mirrorColour = FindColour(mirrorIntersection, scene, camera);
+	vec3 reflectivity = intersection.hitObjectSpecular * mirrorColour;
+
 
 	if (phong.x > 0 || phong.y > 0 || phong.z > 0)
 	{
@@ -392,7 +405,7 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 	{
 		nDotH = nDotH + 0;
 	}
-	return finalColour = lambert + phong;
+	return finalColour = lambert + phong + reflectivity;
 }
 
 vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
@@ -420,7 +433,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 			Intersection shadowIntersection = FindIntersection(scene, ray);
 			if (shadowIntersection.didHit != true)
 			{
-				vec3 colour = ComputeDirectionalLighting(intersection, scene.dirLights[i], camera);
+				vec3 colour = ComputeDirectionalLighting(intersection, scene.dirLights[i], camera, scene);
 				col2 = col2 + colour;
 			}
 
@@ -444,8 +457,8 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-	}
 		eyePosition = vec3(0, -1, 6);
+	}
 	if (viewMode == "cube")
 	{
 		eyePosition = vec3(3, 0, 3);
