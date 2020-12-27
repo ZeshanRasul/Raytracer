@@ -511,7 +511,7 @@ int main()
 //	scene.dirLights.push_back(lightDir1);
 
 	DirectionalLight lightDir2(vec3(0, 0, -3), vec3(0.0f, 0.6f, 0.7f));
-//	scene.dirLights.push_back(lightDir2);
+	scene.dirLights.push_back(lightDir2);
 
 	DirectionalLight lightDir3(vec3(0, 0, 3), vec3(0.0f, 0.6f, 0.7f));
 	scene.dirLights.push_back(lightDir3);
