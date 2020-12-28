@@ -265,7 +265,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectIsSphere = true;
 
 			center = scene.spheres[i].center;
-			intersectionPoint = ray.origin + ray.direction * tSphere;
+			intersectionPoint = ray.origin + (ray.direction * tSphere);
 
 			minDist = tSphere;
 			didHit = true;
@@ -326,9 +326,9 @@ Ray ShootMirrorRay(Intersection intersection)
 	if (intersection.hitObjectIsSphere)
 	{
 	//	direction = normalize(-intersection.hitObjectNormal);
-		direction = normalize(intersection.hitObjectNormal);
+	//	direction = normalize(-intersection.hitObjectNormal);
 	//	direction = -direction;
-	//	direction = normalize(vec3(-intersection.hitObjectNormal.x, intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
+		direction = normalize(vec3(-intersection.hitObjectNormal.x, intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
 	}
 	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
 
@@ -447,7 +447,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 		if (intersection.hitObjectIsSphere)
 		{
 			//mirrorRay.direction = normalize(-intersection.hitObjectNormal);
-			mirrorRay.direction = normalize(intersection.hitObjectNormal);
+			mirrorRay.direction = normalize(-intersection.hitObjectNormal);
 
 		//	direction = -direction;
 		//	mirrorRay.direction = normalize(vec3(-mirrorIntersection.hitObjectNormal.x, mirrorIntersection.hitObjectNormal.y, -mirrorIntersection.hitObjectNormal.z));
@@ -455,7 +455,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 
 		mirrorRay.origin = mirrorIntersection.intersectionPoint + (mirrorRay.direction * (0.00001f));
 		vec3 mirrorColour(0, 0, 0);
-		if (mirrorRay.bounces < 2)
+		if (mirrorRay.bounces < 3)
 		{
 			mirrorRay.bounces = mirrorRay.bounces + 1;
 			mirrorColour = FindColour(mirrorIntersection, scene, camera, mirrorRay);
@@ -467,7 +467,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 			}
 			else
 			{
- 				reflectivity = intersection.hitObjectSpecular * vec3(1, 0, 0);
+ 				reflectivity = intersection.hitObjectSpecular * vec3(1, 0.3, 0);
 			}
 			finalColour = finalColour + reflectivity;
 		}
@@ -477,7 +477,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 	}
 	else
 	{
-		return vec3(1, 0, 0);
+		return vec3(1, 00.3, 0);
 	}
 }
 
