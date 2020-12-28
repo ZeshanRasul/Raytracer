@@ -9,7 +9,8 @@ public:
 	Ray(vec3 origin, vec3 direction)
 		:
 		origin(origin),
-		direction(direction)
+		direction(direction),
+		bounces(1)
 	{}
 
 	~Ray()
@@ -17,4 +18,5 @@ public:
 
 	vec3 origin;
 	vec3 direction;
+	int bounces;
 };

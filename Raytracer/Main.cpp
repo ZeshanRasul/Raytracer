@@ -328,7 +328,7 @@ Ray ShootMirrorRay(Intersection intersection)
 	//	direction = -normalize(intersection.hitObjectNormal);
 
 	//	direction = -direction;
-	//	direction = normalize(vec3(-intersection.hitObjectNormal.x, intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
+		direction = normalize(vec3(-intersection.hitObjectNormal.x, intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
 	}
 	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
 
@@ -488,8 +488,8 @@ int main()
 		scene.spheres.push_back(sphere0);
 		Sphere sphere1(vec3(-1.50f, -1.90f, 0.0f), 0.5f, vec3(0.67, 0.33, 0.93), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		Sphere sphere2(vec3(+1.50f, -1.90f, 0.0f), 0.5f, vec3(0.0f, 0.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-	//	scene.spheres.push_back(sphere1);
-	//	scene.spheres.push_back(sphere2);
+		scene.spheres.push_back(sphere1);
+		scene.spheres.push_back(sphere2);
 		DirectionalLight lightDir8(vec3(-1, 1, -1), vec3(0.5f, 0.5f, 0.5f));
 		scene.dirLights.push_back(lightDir8);
 		DirectionalLight lightDir9(vec3(0, 0, 1), vec3(0.5f, 0.5f, 0.5f));
