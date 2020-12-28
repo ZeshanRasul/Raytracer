@@ -396,12 +396,12 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 		//	direction = -normalize(intersection.hitObjectNormal);
 
 		//	direction = -direction;
-		mirrorRay.direction = normalize(vec3(intersection.hitObjectNormal.x, intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
+		mirrorRay.direction = normalize(vec3(intersection.hitObjectNormal.x, -intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
 	}
 
 	mirrorRay.origin = intersection.intersectionPoint + (mirrorRay.direction * (0.00001f));
 	vec3 mirrorColour(0, 0, 0);
-	if (mirrorRay.bounces < 5)
+	if (mirrorRay.bounces < 2)
 	{
 		mirrorRay.bounces = mirrorRay.bounces + 1;
 		mirrorColour = FindColour(mirrorIntersection, scene, camera, mirrorRay);
@@ -478,7 +478,7 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		eyePosition = vec3(0, -2, 6);
+		eyePosition = vec3(0, -1, 6);
 	}
 	if (viewMode == "cube")
 	{
