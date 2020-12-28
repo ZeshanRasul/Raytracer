@@ -322,13 +322,13 @@ Intersection FindIntersection(Scene scene, Ray ray)
 Ray ShootMirrorRay(Intersection intersection)
 {
 //	vec3 direction = -normalize(intersection.hitObjectNormal);
-	vec3 direction = normalize(vec3(intersection.hitObjectNormal.x, -intersection.hitObjectNormal.y, intersection.hitObjectNormal.z));
+	vec3 direction = normalize(vec3(-intersection.hitObjectNormal.x, -intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
 	if (intersection.hitObjectIsSphere)
 	{
 	//	direction = -normalize(intersection.hitObjectNormal);
 
 	//	direction = -direction;
-		direction = normalize(vec3(-intersection.hitObjectNormal.x, intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
+		direction = normalize(vec3(intersection.hitObjectNormal.x, intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
 	}
 	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
 
@@ -391,10 +391,10 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 
 
 	Intersection mirrorIntersection = FindIntersection(scene, mirrorRay);
-	mirrorRay.bounces = mirrorRay.bounces + 1;
 	vec3 mirrorColour(0, 0, 0);
 	if (mirrorRay.bounces < 5)
 	{
+		mirrorRay.bounces = mirrorRay.bounces + 1;
 		mirrorColour = FindColour(mirrorIntersection, scene, camera, mirrorRay);
 	}
 	vec3 reflectivity = intersection.hitObjectSpecular * mirrorColour;
