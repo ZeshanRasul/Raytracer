@@ -370,11 +370,11 @@ vec3 ComputePointLighting(Intersection intersection, PointLight light, Camera ca
 	return finalColour = lambert + phong;
 }
 
-vec3 FindColour(Intersection intersection, Scene scene, Camera camera);
+vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirrorRay);
 
-vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight light, Camera camera, Scene scene)
+vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight light, Camera camera, Scene scene, Ray mirrorRay)
 {
-//	vec3 normal = normalize(intersection.hitObjectNormal);
+	//	vec3 normal = normalize(intersection.hitObjectNormal);
 	vec3 finalColour;
 	float nDotH;
 	vec3 eyeDirection = normalize(camera.eyePos - intersection.intersectionPoint);
@@ -384,15 +384,19 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 	vec3 lambert = intersection.hitObjectDiffuse * light.colour * max(nDotL, 0.0f);
 
 	vec3 halfVec = normalize(normalizedLightDirection + eyeDirection);
-	
+
 	nDotH = dot(intersection.hitObjectNormal, halfVec);
 
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
 
-	Ray mirrorRay = ShootMirrorRay(intersection);
 	Intersection mirrorIntersection = FindIntersection(scene, mirrorRay);
-	vec3 mirrorColour = FindColour(mirrorIntersection, scene, camera);
+	mirrorRay.bounces = mirrorRay.bounces + 1;
+	vec3 mirrorColour(0, 0, 0);
+	if (mirrorRay.bounces < 5)
+	{
+		mirrorColour = FindColour(mirrorIntersection, scene, camera, mirrorRay);
+	}
 	vec3 reflectivity = intersection.hitObjectSpecular * mirrorColour;
 
 
@@ -416,7 +420,7 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 	return finalColour = lambert + phong + reflectivity;
 }
 
-vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
+vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirrorRay)
 {
 	if (intersection.didHit == true)
 	{
@@ -441,7 +445,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera)
 			Intersection shadowIntersection = FindIntersection(scene, ray);
 			if (shadowIntersection.didHit != true)
 			{
-				vec3 colour = ComputeDirectionalLighting(intersection, scene.dirLights[i], camera, scene);
+				vec3 colour = ComputeDirectionalLighting(intersection, scene.dirLights[i], camera, scene, mirrorRay);
 				col2 = col2 + colour;
 			}
 
@@ -675,7 +679,9 @@ int main()
 			// Shoot Ray
 			Ray ray = ShootRay(camera, i, j, width, height);
 			Intersection intersection = FindIntersection(scene, ray);
-			vec3 colour = FindColour(intersection, scene, camera);
+			Ray mirrorRay = ShootMirrorRay(intersection);
+
+			vec3 colour = FindColour(intersection, scene, camera, mirrorRay);
 			unsigned char col[3] = { 0, 0, 0 };
 			// Reverse order of colours as FreeImage produces BGR image
 			col[0] = unsigned char(colour[2] * 255);
