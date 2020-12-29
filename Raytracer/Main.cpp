@@ -452,10 +452,10 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		Sphere sphere0(vec3(1.50f, -1.90f, 1.5f), 0.5f, vec3(0.0f, 0.2f, 0.2f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere0(vec3(1.50f, -1.90f, 1.5f), 0.5f, vec3(1.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		scene.spheres.push_back(sphere0);
 		Sphere sphere1(vec3(-1.50f, -1.90f, 1.5f), 0.5f, vec3(0.67, 0.33, 0.93), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-		Sphere sphere2(vec3(3.00f, -1.90f, 1.5f), 0.5f, vec3(0.0f, 0.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere2(vec3(3.00f, -1.90f, 1.5f), 0.5f, vec3(1.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 	//	scene.spheres.push_back(sphere1);
 		scene.spheres.push_back(sphere2);
 		DirectionalLight lightDir8(vec3(-1, 1, -1), vec3(0.5f, 0.5f, 0.5f));
