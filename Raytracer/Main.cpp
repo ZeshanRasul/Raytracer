@@ -359,7 +359,7 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 	return finalColour = lambert + phong;
 }
 
-vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirrorRay)
+vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirrorRay, Ray primaryRay)
 {
 	if (intersection.didHit == true)
 	{
@@ -392,17 +392,28 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 
 		finalColour = col1 + col2 + intersection.hitObjectAmbient + intersection.hitObjectEmission;
 
-		if (mirrorRay.bounces < 2 && intersection.hitObjectSpecular != vec3(0, 0 ,0))
+		if (mirrorRay.bounces < 6 && intersection.hitObjectSpecular != vec3(0, 0 ,0))
 		{
+			Ray previousMirrorRay;
+			if (mirrorRay.bounces > 1)
+			{
+				 previousMirrorRay = mirrorRay;
+			}
+			else
+			{
+				previousMirrorRay = primaryRay;
+			}
 			Intersection mirrorIntersection = FindIntersection(scene, mirrorRay);
-			
+			mirrorRay.direction = normalize(normalize(previousMirrorRay.direction) - (2 * dot(normalize(primaryRay.direction), intersection.hitObjectNormal) * intersection.hitObjectNormal));
+
+			mirrorRay.origin = intersection.intersectionPoint + mirrorRay.direction * 0.000001f;
 
 			vec3 mirrorColour;
 			mirrorRay.bounces = mirrorRay.bounces + 1;
 			vec3 reflectivity;			
 			if (mirrorIntersection.didHit)
 			{
-				mirrorColour = FindColour(mirrorIntersection, scene, camera, mirrorRay);
+				mirrorColour = FindColour(mirrorIntersection, scene, camera, mirrorRay, previousMirrorRay);
 				reflectivity =  intersection.hitObjectSpecular * mirrorColour;
 
 			}
@@ -482,19 +493,19 @@ int main()
 		vec3 vert6(+triWidth , +triHeight, +triDepth );
 		vec3 vert7(+triWidth , -triHeight, +triDepth );
 
-		Triangle tri0(vert0, vert3, vert7, vec3(1.0f, 0.0f, 0.0f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1, 0.1, 0.1));
-		Triangle tri1(vert0, vert7, vert4, vec3(1.0f, 0.0f, 0.f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri2(vert1, vert5, vert6, vec3(1.0f, 0.0f, 0.f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri3(vert1, vert6, vert2, vec3(1.0f, 0.0f, 0.f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri4(vert3, vert2, vert6, vec3(1.0f, 0.0f, 0.f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri5(vert3, vert6, vert7, vec3(1.0f, 0.0f, 0.f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri6(vert0, vert5, vert1, vec3(1.0f, 0.0f, 0.f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri7(vert0, vert4, vert5, vec3(1.0f, 0.0f, 0.f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri0(vert0, vert3, vert7, vec3(1.0f, 0.0f, 0.0f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1, 0.1, 0.1));
+		Triangle tri1(vert0, vert7, vert4, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri2(vert1, vert5, vert6, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri3(vert1, vert6, vert2, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri4(vert3, vert2, vert6, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri5(vert3, vert6, vert7, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri6(vert0, vert5, vert1, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri7(vert0, vert4, vert5, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
 
-		Triangle tri8(vert0, vert1, vert2, vec3(1.0f, 0.0f, 0.f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri9(vert0, vert2, vert3, vec3(1.0f, 0.0f, 0.f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 0.0f, 0.f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 0.f), vec3(0.00, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri8(vert0, vert1, vert2, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri9(vert0, vert2, vert3, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00, 1.00), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
 
 		
 		// -Y
@@ -647,13 +658,13 @@ int main()
 		//	intersection.hitObjectNormal.x = intersection.hitObjectNormal.x;
 		//	intersection.hitObjectNormal.y = intersection.hitObjectNormal.y;
 		//	intersection.hitObjectNormal.z = -intersection.hitObjectNormal.z;
-			mirrorRay.direction = -normalize(normalize(ray.direction) - (2 * dot(normalize(ray.direction), intersection.hitObjectNormal) * intersection.hitObjectNormal));
-		//	mirrorRay.direction.y = mirrorRay.direction.y;
+			mirrorRay.direction = normalize(normalize(ray.direction) - (2 * dot(normalize(ray.direction), intersection.hitObjectNormal) * intersection.hitObjectNormal));
+		//	mirrorRay.direction.y = -mirrorRay.direction.y;
 		//	mirrorRay.direction.z = mirrorRay.direction.z;
 		//	mirrorRay.direction.x = -mirrorRay.direction.x;
 
 			mirrorRay.origin = intersection.intersectionPoint + (mirrorRay.direction * 0.00001f);
-			vec3 colour = FindColour(intersection, scene, camera, mirrorRay);
+			vec3 colour = FindColour(intersection, scene, camera, mirrorRay, ray);
 			unsigned char col[3] = { 0, 0, 0 };
 			// Reverse order of colours as FreeImage produces BGR image
 			col[0] = unsigned char(min(colour[2] * 255, 255.0f));
