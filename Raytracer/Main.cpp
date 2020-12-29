@@ -317,7 +317,7 @@ Ray ShootMirrorRay(Intersection intersection, Ray ray)
 
 Ray ShootShadowRay(Intersection intersection, vec3 lightDirection)
 {
-	vec3 direction =  -normalize(lightDirection);
+	vec3 direction =  normalize(intersection.intersectionPoint - lightDirection);
 	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
 
 	Ray ray(origin, direction);
@@ -392,7 +392,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 
 		finalColour = col1 + col2 + intersection.hitObjectAmbient + intersection.hitObjectEmission;
 
-		if (mirrorRay.bounces < 6 && intersection.hitObjectSpecular != vec3(0, 0 ,0))
+		if (mirrorRay.bounces < 5 && intersection.hitObjectSpecular != vec3(0, 0 ,0))
 		{
 			Ray previousMirrorRay;
 			if (mirrorRay.bounces > 1)
@@ -452,7 +452,7 @@ int main()
 	}
 
 	//vec3 eyePosition = vec3(0, 0, -1);
-	vec3 center = vec3(0, 0, 0);
+	vec3 center = vec3(0.0f, 0.0f, 0.0f);
 	vec3 up = vec3(0, 1, 0);
 	float fovY = radians(60.0f);
 	// Create new Camera with default values 
