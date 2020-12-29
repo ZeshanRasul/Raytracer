@@ -261,7 +261,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectEmission = scene.spheres[i].emission;
 			hitObjectAmbient = scene.spheres[i].ambient;
 			hitObjectShininess = scene.spheres[i].shininess;
-			hitObjectNormal = normalize((ray.origin + ray.direction * tSphere) - scene.spheres[i].center);
+			hitObjectNormal = (ray.origin + ray.direction * tSphere) - scene.spheres[i].center;
 			hitObjectIsSphere = true;
 
 			center = scene.spheres[i].center;
@@ -321,16 +321,18 @@ Intersection FindIntersection(Scene scene, Ray ray)
 
 Ray ShootMirrorRay(Intersection intersection)
 {
+	vec3 direction;
 //	vec3 direction = -normalize(intersection.hitObjectNormal);
-	vec3 direction = normalize(vec3(-intersection.hitObjectNormal.x, -intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
+//	vec3 direction = normalize(vec3(intersection.hitObjectNormal.x, -intersection.hitObjectNormal.y, intersection.hitObjectNormal.z));
 	if (intersection.hitObjectIsSphere)
 	{
-	//	direction = normalize(-intersection.hitObjectNormal);
-	//	direction = normalize(-intersection.hitObjectNormal);
+	//	direction = -intersection.hitObjectNormal;
+	//	direction = normalize(intersection.hitObjectNormal);
 	//	direction = -direction;
-		direction = normalize(vec3(-intersection.hitObjectNormal.x, intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
+	//	direction = normalize(vec3(-intersection.hitObjectNormal.x, intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
+		direction = normalize(vec3(intersection.hitObjectNormal.x, -intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
 	}
-	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
+	vec3 origin = vec3(intersection.hitObjectNormal.x, intersection.hitObjectNormal.y, intersection.hitObjectNormal.z) + (direction * (0.00001f));
 
 	Ray ray(origin, direction);
 
@@ -378,13 +380,13 @@ vec3 ComputeDirectionalLighting(Intersection intersection, DirectionalLight ligh
 	float nDotH;
 	vec3 eyeDirection = normalize(camera.eyePos - intersection.intersectionPoint);
 	vec3 normalizedLightDirection = normalize(light.direction);
-	float nDotL = dot(intersection.hitObjectNormal, normalizedLightDirection);
+	float nDotL = dot(normalize(intersection.hitObjectNormal), normalizedLightDirection);
 	// No attenuation for now
 	vec3 lambert = intersection.hitObjectDiffuse * light.colour * max(nDotL, 0.0f);
 
 	vec3 halfVec = normalize(normalizedLightDirection + eyeDirection);
 
-	nDotH = dot(intersection.hitObjectNormal, halfVec);
+	nDotH = dot(normalize(intersection.hitObjectNormal), halfVec);
 
 	vec3 phong = intersection.hitObjectSpecular * light.colour * pow(max(nDotH, 0.0f), intersection.hitObjectShininess);
 
@@ -443,25 +445,28 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 		}
 
 		Intersection mirrorIntersection = FindIntersection(scene, mirrorRay);
-		mirrorRay.direction = normalize(vec3(-mirrorIntersection.hitObjectNormal.x, -mirrorIntersection.hitObjectNormal.y, -mirrorIntersection.hitObjectNormal.z));
+	//	mirrorRay.direction = normalize(vec3(-mirrorIntersection.hitObjectNormal.x, -mirrorIntersection.hitObjectNormal.y, -mirrorIntersection.hitObjectNormal.z));
 		if (intersection.hitObjectIsSphere)
 		{
 			//mirrorRay.direction = normalize(-intersection.hitObjectNormal);
-			mirrorRay.direction = normalize(-intersection.hitObjectNormal);
+		//	mirrorRay.direction = normalize(-intersection.hitObjectNormal);
 
 		//	direction = -direction;
-		//	mirrorRay.direction = normalize(vec3(-mirrorIntersection.hitObjectNormal.x, mirrorIntersection.hitObjectNormal.y, -mirrorIntersection.hitObjectNormal.z));
+		//	mirrorRay.direction = normalize(vec3(mirrorIntersection.hitObjectNormal.x, mirrorIntersection.hitObjectNormal.y, -mirrorIntersection.hitObjectNormal.z));
+			mirrorRay.direction = normalize(vec3(-intersection.hitObjectNormal.x, -intersection.hitObjectNormal.y, -intersection.hitObjectNormal.z));
 		}
 
-		mirrorRay.origin = mirrorIntersection.intersectionPoint + (mirrorRay.direction * (0.00001f));
-		vec3 mirrorColour(0, 0, 0);
-		if (mirrorRay.bounces < 3)
+	//	mirrorRay.origin = mirrorIntersection.intersectionPoint + (mirrorRay.direction * (0.00001f));
+		mirrorRay.origin = normalize(vec3(intersection.hitObjectNormal.x, intersection.hitObjectNormal.y, intersection.hitObjectNormal.z)) + (mirrorRay.direction * (0.00001f));
+
+		vec3 mirrorColour;
+		if (mirrorRay.bounces < 2 && intersection.hitObjectSpecular != vec3(0, 0 ,0))
 		{
 			mirrorRay.bounces = mirrorRay.bounces + 1;
-			mirrorColour = FindColour(mirrorIntersection, scene, camera, mirrorRay);
 			vec3 reflectivity;			
 			if (mirrorIntersection.didHit)
 			{
+				mirrorColour = FindColour(mirrorIntersection, scene, camera, mirrorRay);
 				reflectivity =  intersection.hitObjectSpecular * mirrorColour;
 
 			}
@@ -491,7 +496,7 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		eyePosition = vec3(0, -2, 6);
+		eyePosition = vec3(-1, -2, -6);
 	}
 	if (viewMode == "cube")
 	{
