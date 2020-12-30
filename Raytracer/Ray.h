@@ -14,6 +14,8 @@ public:
 	{}
 
 	Ray()
+		:
+		bounces(1)
 	{}
 
 	~Ray()
