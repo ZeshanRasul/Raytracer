@@ -245,7 +245,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	float hitObjectShininess = 0.0f;
 	vec3 tBetaGamma2;
 	vec3 intersectionPoint(INFINITY, INFINITY, INFINITY);
-	vec3 center;
+	vec3 center(0, 0, 0);
 	bool hitObjectIsSphere = false;
 
 	for (int i = 0; i < scene.spheres.size(); i++)
@@ -307,7 +307,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 		}
 	}
 
-	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient, hitObjectNormal, hitObjectIsSphere);
+	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient, hitObjectNormal, hitObjectIsSphere, center);
 }
 
 Ray ShootMirrorRay(Intersection intersection, Ray ray)
@@ -396,7 +396,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 
 		finalColour = col1 + col2 + intersection.hitObjectAmbient + intersection.hitObjectEmission;
 
-		if (mirrorRay.bounces < 2 && intersection.hitObjectSpecular != vec3(0, 0 ,0))
+		if (mirrorRay.bounces < 5 && intersection.hitObjectSpecular != vec3(0, 0 ,0))
 		{
 			Ray previousMirrorRay;
 			if (mirrorRay.bounces > 1)
@@ -435,6 +435,11 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 			{
 				mirrorRay.origin = intersection.intersectionPoint - (intersection.hitObjectNormal * 0.00001f);
 			}
+			mirrorRay.origin.x = mirrorRay.origin.x - intersection.center.x;
+			mirrorRay.origin.z = mirrorRay.origin.z - intersection.center.z;
+		//	mirrorRay.origin.z = mirrorRay.origin.z - camera.eyePos.z;
+		//	mirrorRay.origin.z = mirrorRay.origin.z - camera.eyePos.z;
+
 		//	Intersection mirrorIntersection = FindIntersection(scene, mirrorRay);
 			vec3 mirrorColour;
 			mirrorRay.bounces = mirrorRay.bounces + 1;
@@ -490,10 +495,10 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		Sphere sphere0(vec3(0.00f, -2.00f, 1.00f), 1.0f, vec3(1.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere0(vec3(0.00f, -2.00f, 0.00f), 1.0f, vec3(1.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		scene.spheres.push_back(sphere0);
 		Sphere sphere1(vec3(-1.50f, -1.90f, 1.5f), 1.0f, vec3(0.67, 0.33, 0.93), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-		Sphere sphere2(vec3(3.00f, -2.00f, 1.0f), 1.00f, vec3(1.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere2(vec3(3.00f, -2.00f, 0.0f), 1.00f, vec3(1.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 	//	scene.spheres.push_back(sphere1);
 		scene.spheres.push_back(sphere2);
 		DirectionalLight lightDir8(vec3(-1, 1, -1), vec3(0.5f, 0.5f, 0.5f));
@@ -718,6 +723,11 @@ int main()
 			{
 				mirrorRay.origin = intersection.intersectionPoint - (intersection.hitObjectNormal * 0.00001f);
 			}
+			mirrorRay.origin.x = mirrorRay.origin.x - intersection.center.x;
+			mirrorRay.origin.z = mirrorRay.origin.z - intersection.center.z;
+		//	mirrorRay.origin.z = mirrorRay.origin.z + camera.eyePos.z;
+
+
 			vec3 colour = FindColour(intersection, scene, camera, mirrorRay, ray);
 			unsigned char col[3] = { 0, 0, 0 };
 			// Reverse order of colours as FreeImage produces BGR image
