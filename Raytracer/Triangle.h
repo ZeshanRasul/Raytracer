@@ -9,9 +9,9 @@ class Triangle : public Object
 public:
 	Triangle(vec3 vertex0, vec3 vertex1, vec3 vertex2, vec3 diffuse, vec3 specular, vec3 emission, float shininess, vec3 ambient)
 		:
-		vertex0(vertex0),
-		vertex1(vertex1),
-		vertex2(vertex2),
+		vertex0(vec4(vertex0, 1)),
+		vertex1(vec4(vertex1, 1)),
+		vertex2(vec4(vertex2, 1)),
 		diffuse(diffuse),
 		specular(specular),
 		emission(emission),
@@ -33,7 +33,7 @@ public:
 	}
 
 
-	vec3 vertex0, vertex1, vertex2;
+	vec4 vertex0, vertex1, vertex2;
 	vec3 normalA;
 	vec3 normalB;
 	vec3 normalC;
