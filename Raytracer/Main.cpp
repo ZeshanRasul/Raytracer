@@ -247,6 +247,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 	vec3 intersectionPoint(INFINITY, INFINITY, INFINITY);
 	vec3 center(0, 0, 0);
 	bool hitObjectIsSphere = false;
+	vec3 reflectionNormal(0, 0, 0);
 
 	for (int i = 0; i < scene.spheres.size(); i++)
 	{
@@ -259,7 +260,9 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectEmission = scene.spheres[i].emission;
 			hitObjectAmbient = scene.spheres[i].ambient;
 			hitObjectShininess = scene.spheres[i].shininess;
-			hitObjectNormal = normalize((ray.origin + (normalize(ray.direction) * tSphere)) - scene.spheres[i].center);
+			hitObjectNormal = normalize((ray.origin + (ray.direction * tSphere)) - scene.spheres[i].center);
+		//  TODO
+			reflectionNormal = normalize((ray.origin + (ray.direction * tSphere)) - scene.spheres[i].center + ray.origin);
 			//hitObjectNormal = ((ray.origin + (ray.direction * tSphere)) - scene.spheres[i].center) / scene.spheres[i].radius;
 		//	hitObjectNormal.y = -hitObjectNormal.y;
 		//	hitObjectNormal.z = -hitObjectNormal.z;
@@ -268,6 +271,11 @@ Intersection FindIntersection(Scene scene, Ray ray)
 
 			center = scene.spheres[i].center;
 			intersectionPoint = ray.origin + (normalize(ray.direction) * tSphere);
+
+			if (intersectionPoint != vec3(INFINITY, INFINITY, INFINITY))
+			{
+				intersectionPoint = intersectionPoint + vec3(0, 0, 0);
+			}
 
 			minDist = tSphere;
 			didHit = true;
@@ -307,7 +315,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 		}
 	}
 
-	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient, hitObjectNormal, hitObjectIsSphere, center);
+	return Intersection(didHit, intersectionPoint, hitObjectDiffuse, hitObjectSpecular, hitObjectEmission, hitObjectShininess, hitObjectAmbient, hitObjectNormal, hitObjectIsSphere, center, reflectionNormal);
 }
 
 Ray ShootMirrorRay(Intersection intersection, Ray ray)
@@ -471,15 +479,15 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 
 int main()
 {
-	const int width = 160;
-	const int height = 120;
+	const int width = 1280;
+	const int height = 960;
 	unsigned char* pixels = new unsigned char [width * height * 3];
 	std::string outputFilename = "Raytracer.png";
 	vec3 eyePosition;
 
 	if (viewMode == "sphere")
 	{
-		eyePosition = vec3(0, 0, 7);
+		eyePosition = vec3(7, 0, 7);
 	}
 	if (viewMode == "cube")
 	{
@@ -498,13 +506,24 @@ int main()
 	if (viewMode == "sphere")
 	{
 		Sphere sphere0(vec3(0.00f, 0.00f, 0.00f), 1.0f, vec3(1.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere1(vec3(-1.50f, 0.00f, 0.00f), 1.0f, vec3(0.67, 0.33, 0.93), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere2(vec3(3.00f, 0.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere3(vec3(0.00f, 0.00f, -1.50f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere4(vec3(0.00f, 0.00f, 1.50f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere5(vec3(-1.50f, 3.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere6(vec3(-1.50f, -3.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		
 		scene.spheres.push_back(sphere0);
-		Sphere sphere1(vec3(-1.50f, -1.90f, 1.5f), 1.0f, vec3(0.67, 0.33, 0.93), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-		Sphere sphere2(vec3(3.00f, 0.00f, 0.0f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-	//	scene.spheres.push_back(sphere1);
+		scene.spheres.push_back(sphere1);
 		scene.spheres.push_back(sphere2);
+		scene.spheres.push_back(sphere3);
+		scene.spheres.push_back(sphere4);
+		scene.spheres.push_back(sphere5);
+		scene.spheres.push_back(sphere6);
+		
 		DirectionalLight lightDir8(vec3(-1, 1, -1), vec3(0.5f, 0.5f, 0.5f));
 		scene.dirLights.push_back(lightDir8);
+		
 		DirectionalLight lightDir9(vec3(0, 0, 1), vec3(0.5f, 0.5f, 0.5f));
 	//	scene.dirLights.push_back(lightDir8);
 
@@ -576,25 +595,30 @@ int main()
 			Intersection intersection = FindIntersection(scene, ray);
 		//	Ray mirrorRay = ShootMirrorRay(intersection, ray);
 			Ray mirrorRay;
+		//TODO
+		//	vec3 tempNormal = intersection.reflectionNormal;
 			vec3 tempNormal = intersection.hitObjectNormal;
 		
 			if (dot(ray.direction, intersection.hitObjectNormal) > 0)
 			{
 				tempNormal = -tempNormal;
 			}
-
+			//	tempNormal.x = 1;
+			//	tempNormal.y = 0;
+			//	tempNormal.z = 0;
 			Ray tempRay = ray;
 			if (intersection.didHit)
 			{
-			//	mirrorRay.direction = normalize(normalize(ray.direction) - (2.0f * dot(normalize(ray.direction), tempNormal) * tempNormal));
+				mirrorRay.direction = normalize(normalize(ray.direction) - (2.0f * dot(normalize(ray.direction), tempNormal) * tempNormal));
 				tempRay.direction = normalize(tempRay.direction);
-				mirrorRay.direction.x = tempRay.direction.x - (2.0f * dot(tempRay.direction.x, tempNormal.x) * tempNormal.x);
-				mirrorRay.direction.y = tempRay.direction.y - (2.0f * dot(tempRay.direction.y, tempNormal.y) * tempNormal.y);
-				mirrorRay.direction.z = tempRay.direction.z - (2.0f * dot(tempRay.direction.z, tempNormal.z) * tempNormal.z);
+			//	mirrorRay.direction.x = tempRay.direction.x - (2.0f * dot(tempRay.direction.x, tempNormal.x) * tempNormal.x);
+			//	mirrorRay.direction.y = tempRay.direction.y - (2.0f * dot(tempRay.direction.y, tempNormal.y) * tempNormal.y);
+			//	mirrorRay.direction.z = tempRay.direction.z - (2.0f * dot(tempRay.direction.z, tempNormal.z) * tempNormal.z);
 			//	mirrorRay.direction.x = 1;
-			//	mirrorRay.direction.y = 0;
+			//	mirrorRay.direction.y = 1;
 			//	mirrorRay.direction.z = 0;
-			//	mirrorRay.direction.z = mirrorRay.direction.z;
+				// TODO this section
+			//	mirrorRay.direction.z = -mirrorRay.direction.z;
 				mirrorRay.direction = normalize(mirrorRay.direction);
 				if (intersection.didHit == true)
 				{

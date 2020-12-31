@@ -15,7 +15,8 @@ public:
 		vec3 hitObjectAmbient,
 		vec3 hitObjectNormal,
 		bool hitObjectIsSphere,
-		vec3 center)
+		vec3 center,
+		vec3 reflectionNormal)
 		:
 		didHit(didHit),
 		intersectionPoint(intersectionPoint),
@@ -26,7 +27,8 @@ public:
 		hitObjectAmbient(hitObjectAmbient),
 		hitObjectNormal(hitObjectNormal),
 		hitObjectIsSphere(hitObjectIsSphere),
-		center(center)
+		center(center),
+		reflectionNormal(reflectionNormal)
 	{		
 	}
 
@@ -44,4 +46,5 @@ public:
 	vec3 hitObjectNormal;
 	bool hitObjectIsSphere;
 	vec3 center;
+	vec3 reflectionNormal;
 };
