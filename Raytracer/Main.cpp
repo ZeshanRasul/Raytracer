@@ -437,7 +437,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 			}
 			mirrorRay.origin.x = mirrorRay.origin.x - intersection.center.x;
 			mirrorRay.origin.z = mirrorRay.origin.z - intersection.center.z;
-		//	mirrorRay.origin.z = mirrorRay.origin.z - camera.eyePos.z;
+		//	mirrorRay.origin.z = mirrorRay.origin.z + camera.eyePos.z;
 		//	mirrorRay.origin.z = mirrorRay.origin.z - camera.eyePos.z;
 
 		//	Intersection mirrorIntersection = FindIntersection(scene, mirrorRay);
@@ -452,7 +452,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 			}
 			else
 			{
- 				reflectivity = intersection.hitObjectSpecular * vec3(0, 0, 0);
+ 				reflectivity = intersection.hitObjectSpecular * vec3(0, 0.33, 1);
 			}
 
 			finalColour = finalColour + reflectivity;
@@ -463,14 +463,14 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 	}
 	else
 	{
-		return vec3(0, 0, 0);
+		return vec3(0, 0.33, 1);
 	}
 }
 
 int main()
 {
-	const int width = 160;
-	const int height = 120;
+	const int width = 1280;
+	const int height = 960;
 	unsigned char* pixels = new unsigned char [width * height * 3];
 	std::string outputFilename = "Raytracer.png";
 	vec3 eyePosition;
