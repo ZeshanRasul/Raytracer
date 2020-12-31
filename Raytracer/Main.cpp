@@ -479,8 +479,8 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 
 int main()
 {
-	const int width = 1280;
-	const int height = 960;
+	const int width = 160;
+	const int height = 120;
 	unsigned char* pixels = new unsigned char [width * height * 3];
 	std::string outputFilename = "Raytracer.png";
 	vec3 eyePosition;
@@ -514,12 +514,12 @@ int main()
 		Sphere sphere6(vec3(-1.50f, -3.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		
 		scene.spheres.push_back(sphere0);
-		scene.spheres.push_back(sphere1);
+	//	scene.spheres.push_back(sphere1);
 		scene.spheres.push_back(sphere2);
-		scene.spheres.push_back(sphere3);
-		scene.spheres.push_back(sphere4);
-		scene.spheres.push_back(sphere5);
-		scene.spheres.push_back(sphere6);
+	//	scene.spheres.push_back(sphere3);
+	//	scene.spheres.push_back(sphere4);
+	//	scene.spheres.push_back(sphere5);
+	//	scene.spheres.push_back(sphere6);
 		
 		DirectionalLight lightDir8(vec3(-1, 1, -1), vec3(0.5f, 0.5f, 0.5f));
 		scene.dirLights.push_back(lightDir8);
