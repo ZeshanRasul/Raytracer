@@ -487,7 +487,7 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		eyePosition = vec3(7, 0, 7);
+		eyePosition = vec3(-7, 0, 7);
 	}
 	if (viewMode == "cube")
 	{
@@ -506,20 +506,20 @@ int main()
 	if (viewMode == "sphere")
 	{
 		Sphere sphere0(vec3(0.00f, 0.00f, 0.00f), 1.0f, vec3(1.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-		Sphere sphere1(vec3(-1.50f, 0.00f, 0.00f), 1.0f, vec3(0.67, 0.33, 0.93), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere1(vec3(-3.00f, 0.00f, 0.00f), 1.0f, vec3(0.67, 0.33, 0.93), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		Sphere sphere2(vec3(3.00f, 0.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		Sphere sphere3(vec3(0.00f, 0.00f, -1.50f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		Sphere sphere4(vec3(0.00f, 0.00f, 1.50f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-		Sphere sphere5(vec3(-1.50f, 3.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-		Sphere sphere6(vec3(-1.50f, -3.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere5(vec3(0.00f, 3.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere6(vec3(0.00f, -3.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		
 		scene.spheres.push_back(sphere0);
-	//	scene.spheres.push_back(sphere1);
+		scene.spheres.push_back(sphere1);
 		scene.spheres.push_back(sphere2);
-	//	scene.spheres.push_back(sphere3);
-	//	scene.spheres.push_back(sphere4);
-	//	scene.spheres.push_back(sphere5);
-	//	scene.spheres.push_back(sphere6);
+		scene.spheres.push_back(sphere3);
+		scene.spheres.push_back(sphere4);
+		scene.spheres.push_back(sphere5);
+		scene.spheres.push_back(sphere6);
 		
 		DirectionalLight lightDir8(vec3(-1, 1, -1), vec3(0.5f, 0.5f, 0.5f));
 		scene.dirLights.push_back(lightDir8);
@@ -632,7 +632,7 @@ int main()
 				if (dot(mirrorRay.direction, intersection.hitObjectNormal) > 0)
 				{
 					mirrorRay.origin = intersection.intersectionPoint + (mirrorRay.direction * 0.00001f) + ray.origin - intersection.center;
-				} 
+				}
 				else
 				{
 					mirrorRay.origin = intersection.intersectionPoint - (mirrorRay.direction * 0.00001f) + ray.origin - intersection.center;
