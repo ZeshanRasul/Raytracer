@@ -419,9 +419,9 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 			Intersection mirrorIntersection = FindIntersection(scene, mirrorRay);
 
 
-			mirrorRay.direction.x = previousMirrorRay.direction.x - (2.0f * dot(previousMirrorRay.direction.x, tempNormal.x) * tempNormal.x);
-			mirrorRay.direction.y = previousMirrorRay.direction.y - (2.0f * dot(previousMirrorRay.direction.y, tempNormal.y) * tempNormal.y);
-			mirrorRay.direction.z = previousMirrorRay.direction.z - (2.0f * dot(previousMirrorRay.direction.z, tempNormal.z) * tempNormal.z);
+			mirrorRay.direction.x = normalize(previousMirrorRay.direction).x - (2.0f * dot(normalize(previousMirrorRay.direction).x, tempNormal.x) * tempNormal.x);
+			mirrorRay.direction.y = normalize(previousMirrorRay.direction).y - (2.0f * dot(normalize(previousMirrorRay.direction).y, tempNormal.y) * tempNormal.y);
+			mirrorRay.direction.z = normalize(previousMirrorRay.direction).z - (2.0f * dot(normalize(previousMirrorRay.direction).z, tempNormal.z) * tempNormal.z);
 			mirrorRay.direction = normalize(mirrorRay.direction);
 
 
@@ -477,7 +477,7 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		eyePosition = vec3(0, -2, -10);
+		eyePosition = vec3(0, -2, 10);
 	}
 	if (viewMode == "cube")
 	{
@@ -691,7 +691,7 @@ int main()
 		//	intersection.hitObjectNormal.x = -intersection.hitObjectNormal.x;
 		//	intersection.hitObjectNormal.y = -intersection.hitObjectNormal.y;
 		//	intersection.hitObjectNormal.z = -intersection.hitObjectNormal.z;
-			vec3 tempNormal = intersection.hitObjectNormal;
+			vec3 tempNormal = -intersection.hitObjectNormal;
 		//	float tempSwap = tempNormal.y;
 		//	tempNormal.y = -tempNormal.y;
 	//		tempNormal.z = -tempNormal.z;
