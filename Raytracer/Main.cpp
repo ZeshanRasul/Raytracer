@@ -285,7 +285,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 		//	hitObjectNormal.x =  -(ray.origin.x + (normalize(ray.direction).x * tSphere)) - scene.spheres[i].center.x;
 		//	hitObjectNormal = ((ray.origin + (ray.direction * tSphere)) - scene.spheres[i].center) / scene.spheres[i].radius;
 
-			intersectionPoint = ray.origin + (ray.direction * tSphere) ;
+			intersectionPoint = ray.origin + (normalize(ray.direction) * tSphere) ;
 		//	intersectionPoint = ray.origin + (ray.direction * tSphere) + ray.origin;
 
 		//	hitObjectNormal.x =  (ray.origin.x + (normalize(ray.direction).x * tSphere)) - scene.spheres[i].center.x + ray.origin.x;
@@ -550,12 +550,12 @@ int main()
 	if (viewMode == "sphere")
 	{
 		Sphere sphere0(vec3(0.00f, 0.00f, 0.00f), 1.0f, vec3(1.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-		Sphere sphere1(vec3(-3.00f, 0.00f, 0.00f), 1.0f, vec3(0.67, 0.33, 0.93), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-		Sphere sphere2(vec3(3.00f, 0.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere1(vec3(-3.00f, 0.00f, 0.00f), 1.0f, vec3(0.00f, 0.5, 0.5), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere2(vec3(3.00f, 0.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		Sphere sphere3(vec3(0.00f, 0.00f, -1.50f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		Sphere sphere4(vec3(0.00f, 0.00f, 1.50f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-		Sphere sphere5(vec3(0.00f, 3.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
-		Sphere sphere6(vec3(0.00f, -3.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere5(vec3(0.00f, 3.00f, 0.00f), 1.00f, vec3(1.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere6(vec3(0.00f, -3.00f, 0.00f), 1.00f, vec3(1.0f, 0.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		
 		scene.spheres.push_back(sphere0);
 		scene.spheres.push_back(sphere1);
@@ -651,15 +651,15 @@ int main()
 			{
 			//	tempNormal.x = -tempNormal.x;
 			//	tempNormal.y = -tempNormal.y;
-				tempNormal = -tempNormal;
+			//	tempNormal = -tempNormal;
 			}
 			//	tempNormal.x = 0;
 			//	tempNormal.y = 1;
 			//	tempNormal.z = 0;
-			Ray tempRay = ray;
+			Ray tempRay(ray.origin, ray.direction);
 			if (intersection.didHit)
 			{
-				mirrorRay.direction = normalize(normalize(ray.direction) - (2.0f * dot(normalize(ray.direction), tempNormal) * tempNormal));
+				mirrorRay.direction = normalize(normalize(tempRay.direction) - (2.0f * dot(normalize(tempRay.direction), tempNormal) * tempNormal));
 			//	tempRay.direction = normalize(tempRay.direction);
 			//	mirrorRay.direction.x = tempRay.direction.x - (2.0f * dot(tempRay.direction.x, tempNormal.x) * tempNormal.x);
 			//	mirrorRay.direction.y = tempRay.direction.y - (2.0f * dot(tempRay.direction.y, tempNormal.y) * tempNormal.y);
@@ -669,23 +669,26 @@ int main()
 			//	mirrorRay.direction.z = 0;
 				// TODO this section
 			//	mirrorRay.direction.z = -mirrorRay.direction.z;
-				mirrorRay.direction = normalize(mirrorRay.direction);
+			//	mirrorRay.direction = normalize(mirrorRay.direction);
 				if (intersection.didHit == true)
 				{
 					tempNormal = tempNormal + vec3(0, 0, 0);
 				}
 			//	float tempDir = mirrorRay.direction.y;
+			//	mirrorRay.direction.y = -mirrorRay.direction.y;
 			//	mirrorRay.direction.y = mirrorRay.direction.z;
 			//	mirrorRay.direction.z = tempDir;
 			//	mirrorRay.direction.x = -mirrorRay.direction.x;
-			//	mirrorRay.direction = mirrorRay.direction;
+			//	mirrorRay.direction = -mirrorRay.direction;
 				if (dot(mirrorRay.direction, intersection.hitObjectNormal) > 0)
 				{
 					mirrorRay.origin = intersection.intersectionPoint + (mirrorRay.direction * 0.00001f) + ray.origin + intersection.center;
 				}
 				else
 				{
-					mirrorRay.origin = intersection.intersectionPoint - (mirrorRay.direction * 0.00001f) + ray.origin + intersection.center;
+					mirrorRay.origin.x = intersection.intersectionPoint.x - (mirrorRay.direction.x * 0.00001f) + ray.origin.x + intersection.center.x;
+					mirrorRay.origin.y = intersection.intersectionPoint.y - (mirrorRay.direction.y * 0.00001f) + ray.origin.y + intersection.center.y;
+					mirrorRay.origin.z = intersection.intersectionPoint.z - (mirrorRay.direction.z * 0.00001f) + ray.origin.z + intersection.center.z;
 					// TODO Component by component maybe add or minus y opposite to what is done for x and z..
 				
 				}
