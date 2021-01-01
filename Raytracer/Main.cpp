@@ -260,9 +260,14 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectEmission = scene.spheres[i].emission;
 			hitObjectAmbient = scene.spheres[i].ambient;
 			hitObjectShininess = scene.spheres[i].shininess;
-			hitObjectNormal = normalize((ray.origin + (normalize(ray.direction) * tSphere)) - scene.spheres[i].center);
-		//	hitObjectNormal.y = scene.spheres[i].center.y - (ray.origin.y + (normalize(ray.direction).y * tSphere));
-			hitObjectNormal.y = -hitObjectNormal.y;
+		//	hitObjectNormal = normalize((ray.origin + (normalize(ray.direction) * tSphere)) - scene.spheres[i].center);
+		//	hitObjectNormal.x =  -(ray.origin.x + (normalize(ray.direction).x * tSphere)) - scene.spheres[i].center.x;
+			
+			hitObjectNormal.x =  -(ray.origin.x + (normalize(ray.direction).x * tSphere)) - scene.spheres[i].center.x;
+			hitObjectNormal.y =  -(ray.origin.y + (normalize(ray.direction).y * tSphere)) - scene.spheres[i].center.y;
+			hitObjectNormal.z =  (ray.origin.z + (normalize(ray.direction).z * tSphere)) - scene.spheres[i].center.z;
+		//	hitObjectNormal.y = -hitObjectNormal.y;
+		//	hitObjectNormal.x = -hitObjectNormal.x;
 			hitObjectNormal = normalize(hitObjectNormal);
 		//  TODO
 			if (hitObjectNormal.y > 0.5)
@@ -404,11 +409,11 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 		{
 			Ray ray = ShootShadowRay(intersection, scene.dirLights[i].direction);
 			Intersection shadowIntersection = FindIntersection(scene, ray);
-			if (shadowIntersection.didHit != true)
-			{
+		//	if (shadowIntersection.didHit != true)
+		//	{
 				vec3 colour = ComputeDirectionalLighting(intersection, scene.dirLights[i], camera, scene);
 				col2 = col2 + colour;
-			}
+		//	}
 
 		}
 
@@ -472,7 +477,7 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 			}
 			else
 			{
- 				reflectivity = intersection.hitObjectSpecular * vec3(0, 0.33, 1);
+ 				reflectivity = intersection.hitObjectSpecular * vec3(1, 1, 1);
 			}
 
 			finalColour = finalColour + reflectivity;
@@ -497,7 +502,7 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		eyePosition = vec3(-7, 0, 7);
+		eyePosition = vec3(0, 0, -10);
 	}
 	if (viewMode == "cube")
 	{
@@ -526,12 +531,12 @@ int main()
 		scene.spheres.push_back(sphere0);
 		scene.spheres.push_back(sphere1);
 		scene.spheres.push_back(sphere2);
-		scene.spheres.push_back(sphere3);
+	//	scene.spheres.push_back(sphere3);
 		scene.spheres.push_back(sphere4);
 		scene.spheres.push_back(sphere5);
 		scene.spheres.push_back(sphere6);
 		
-		DirectionalLight lightDir8(vec3(-1, 1, -1), vec3(0.5f, 0.5f, 0.5f));
+		DirectionalLight lightDir8(vec3(-1, 1, 1), vec3(0.5f, 0.5f, 0.5f));
 		scene.dirLights.push_back(lightDir8);
 		
 		DirectionalLight lightDir9(vec3(0, 0, 1), vec3(0.5f, 0.5f, 0.5f));
@@ -542,10 +547,10 @@ int main()
 		DirectionalLight lightDir2(vec3(1, 0, 1), vec3(0.0f, 0.6f, 0.7f));
 	//	scene.dirLights.push_back(lightDir2);
 
-		float triWidth = 5.0f;
-		float triHeight = 0.2f;
-		float triDepth = 5.0f;
-		float triCenter = 1.00f;
+		float triWidth = 10.0f;
+		float triHeight = 20.0f;
+		float triDepth = 10.0f;
+		float triCenter = 0.00f;
 
 		vec3 vert0(-triWidth , -triHeight , -triDepth );
 		vec3 vert1(-triWidth , +triHeight , -triDepth );
@@ -556,21 +561,21 @@ int main()
 		vec3 vert6(+triWidth , +triHeight , +triDepth );
 		vec3 vert7(+triWidth , -triHeight , +triDepth );
 
-		Triangle tri0(vert0, vert3, vert7, vec3(1.0f, 0.0f, 0.0f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1, 0.1, 0.1));
-		Triangle tri1(vert0, vert7, vert4, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri2(vert1, vert5, vert6, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri3(vert1, vert6, vert2, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri4(vert3, vert2, vert6, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri5(vert3, vert6, vert7, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri6(vert0, vert5, vert1, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri7(vert0, vert4, vert5, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri0(vert0, vert3, vert7, vec3(1.0f, 0.0f, 0.0f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1, 0.1, 0.1));
+		Triangle tri1(vert0, vert7, vert4, vec3(1.0f, 0.0f, 0.f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri2(vert1, vert5, vert6, vec3(1.0f, 0.0f, 0.f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri3(vert1, vert6, vert2, vec3(1.0f, 0.0f, 0.f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri4(vert3, vert2, vert6, vec3(1.0f, 0.0f, 0.f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri5(vert3, vert6, vert7, vec3(1.0f, 0.0f, 0.f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri6(vert0, vert5, vert1, vec3(1.0f, 0.0f, 0.f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri7(vert0, vert4, vert5, vec3(1.0f, 0.0f, 0.f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
 
-		Triangle tri8(vert0, vert1, vert2, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri9(vert0, vert2, vert3, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
-		Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 0.f), vec3(1.00f, 1.00f, 1.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri8(vert0, vert1, vert2, vec3(1.0f, 0.0f, 0.f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri9(vert0, vert2, vert3, vec3(1.0f, 0.0f, 0.f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri10(vert4, vert7, vert6, vec3(1.0f, 0.0f, 0.f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
+		Triangle tri11(vert4, vert6, vert5, vec3(1.0f, 0.0f, 0.f), vec3(0.00f, 0.00f, 0.00f), vec3(0.15f, 0.05f, 0.0f), 1.00f, vec3(0.1f, 0.1f, 0.1f));
 
-		/*
+		
 		// -Y
 		scene.triangles.push_back(tri0);
 		scene.triangles.push_back(tri1);
@@ -593,7 +598,7 @@ int main()
 		// +Z
 		scene.triangles.push_back(tri10);
 		scene.triangles.push_back(tri11);
-		*/
+		
 	}
 
 	for (int i = 0; i < width; i++)
@@ -608,9 +613,15 @@ int main()
 		//TODO
 		//	vec3 tempNormal = intersection.reflectionNormal;
 			vec3 tempNormal = intersection.hitObjectNormal;
+		//	tempNormal.y = -intersection.hitObjectNormal.y;
+		//	tempNormal.x = -intersection.hitObjectNormal.x;
+		//	tempNormal.z = intersection.hitObjectNormal.z;
 		
+			// TODO, check when this code executes
 			if (dot(ray.direction, intersection.hitObjectNormal) > 0)
 			{
+			//	tempNormal.x = -tempNormal.x;
+			//	tempNormal.y = -tempNormal.y;
 				tempNormal = -tempNormal;
 			}
 			//	tempNormal.x = 0;
