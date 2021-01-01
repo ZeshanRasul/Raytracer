@@ -260,8 +260,18 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectEmission = scene.spheres[i].emission;
 			hitObjectAmbient = scene.spheres[i].ambient;
 			hitObjectShininess = scene.spheres[i].shininess;
-			hitObjectNormal = normalize((ray.origin + (ray.direction * tSphere)) - scene.spheres[i].center);
+			hitObjectNormal = normalize((ray.origin + (normalize(ray.direction) * tSphere)) - scene.spheres[i].center);
+		//	hitObjectNormal.y = scene.spheres[i].center.y - (ray.origin.y + (normalize(ray.direction).y * tSphere));
+			hitObjectNormal.y = -hitObjectNormal.y;
+			hitObjectNormal = normalize(hitObjectNormal);
 		//  TODO
+			if (hitObjectNormal.y > 0.5)
+			{
+				ray.origin = ray.origin + vec3(0, 0, 0);
+				hitSphere = scene.spheres[i];
+
+				hitObjectNormal = hitObjectNormal + vec3(0, 0, 0);
+			}
 			reflectionNormal = normalize((ray.origin + (ray.direction * tSphere)) - scene.spheres[i].center + ray.origin);
 			//hitObjectNormal = ((ray.origin + (ray.direction * tSphere)) - scene.spheres[i].center) / scene.spheres[i].radius;
 		//	hitObjectNormal.y = -hitObjectNormal.y;
@@ -479,8 +489,8 @@ vec3 FindColour(Intersection intersection, Scene scene, Camera camera, Ray mirro
 
 int main()
 {
-	const int width = 160;
-	const int height = 120;
+	const int width = 1280;
+	const int height = 960;
 	unsigned char* pixels = new unsigned char [width * height * 3];
 	std::string outputFilename = "Raytracer.png";
 	vec3 eyePosition;
@@ -603,8 +613,8 @@ int main()
 			{
 				tempNormal = -tempNormal;
 			}
-			//	tempNormal.x = 1;
-			//	tempNormal.y = 0;
+			//	tempNormal.x = 0;
+			//	tempNormal.y = 1;
 			//	tempNormal.z = 0;
 			Ray tempRay = ray;
 			if (intersection.didHit)
