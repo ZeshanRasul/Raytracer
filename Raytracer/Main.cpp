@@ -174,6 +174,8 @@ float CheckSphereIntersection(Sphere sphere, Ray ray)
 	{
 		return (-b - (sqrt(discriminant)) / (2.00f * a));
 	}
+
+	// TODO Complete this
 }
 
 vec3 CheckTriangleIntersection(Triangle triangle, Ray ray)
@@ -281,7 +283,7 @@ Intersection FindIntersection(Scene scene, Ray ray)
 			hitObjectAmbient = scene.spheres[i].ambient;
 			hitObjectShininess = scene.spheres[i].shininess;
 
-		//	hitObjectNormal = normalize((ray.origin + (normalize(ray.direction) * tSphere)) - scene.spheres[i].center);
+			hitObjectNormal = normalize(((ray.origin + (normalize(ray.direction) * tSphere)) - scene.spheres[i].center) / scene.spheres[i].radius);
 		//	hitObjectNormal.x =  -(ray.origin.x + (normalize(ray.direction).x * tSphere)) - scene.spheres[i].center.x;
 		//	hitObjectNormal = ((ray.origin + (ray.direction * tSphere)) - scene.spheres[i].center) / scene.spheres[i].radius;
 
@@ -293,14 +295,22 @@ Intersection FindIntersection(Scene scene, Ray ray)
 		//	hitObjectNormal.y =  (ray.origin.y + (normalize(ray.direction).y * tSphere)) - scene.spheres[i].center.y + ray.origin.y;
 		//	hitObjectNormal.z =  (ray.origin.z + (normalize(ray.direction).z * tSphere)) - scene.spheres[i].center.z + ray.origin.z;
 			
-			hitObjectNormal.x =  (ray.origin.x + (normalize(ray.direction).x * tSphere)) - scene.spheres[i].center.x;
-			hitObjectNormal.y =  (ray.origin.y + (normalize(ray.direction).y * tSphere)) - scene.spheres[i].center.y ;
-			hitObjectNormal.z =  (ray.origin.z + (normalize(ray.direction).z * tSphere)) - scene.spheres[i].center.z;
-		
-		//	hitObjectNormal.y = -hitObjectNormal.y;
+		//	hitObjectNormal.x =  ((ray.origin.x + (normalize(ray.direction).x * tSphere)) - scene.spheres[i].center.x) / scene.spheres[i].radius;
+		//	hitObjectNormal.y =  ((ray.origin.y + (normalize(ray.direction).y * tSphere)) - scene.spheres[i].center.y) / scene.spheres[i].radius;
+		//	hitObjectNormal.z =  ((ray.origin.z + (normalize(ray.direction).z * tSphere)) - scene.spheres[i].center.z) / scene.spheres[i].radius;
+			
+			//hitObjectNormal.y = -hitObjectNormal.y;
+			
+			// check if ray dot normal is > 0 
+			// if true ray is inside sphere, set normal to inverse normal
+			// if false ray is outside sphere, set normal to normal;
+			if (dot(ray.direction, hitObjectNormal) > 0)
+			{
+			//	hitObjectNormal = -hitObjectNormal;
+			}
 		//	hitObjectNormal.x = -hitObjectNormal.x;
 		//	hitObjectNormal.z = -hitObjectNormal.z;
-			hitObjectNormal = normalize(hitObjectNormal);
+		//	hitObjectNormal = normalize(hitObjectNormal);
 		//  TODO
 			if (hitObjectNormal.y > 0.5)
 			{
@@ -372,7 +382,7 @@ Ray ShootMirrorRay(Intersection intersection, Ray ray)
 
 Ray ShootShadowRay(Intersection intersection, vec3 lightDirection)
 {
-	vec3 direction =  normalize(intersection.intersectionPoint - lightDirection);
+	vec3 direction =  normalize(- lightDirection);
 	vec3 origin = intersection.intersectionPoint + (direction * (0.00001f));
 
 	Ray ray(origin, direction);
@@ -525,7 +535,7 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		eyePosition = vec3(0, 0, -15);
+		eyePosition = vec3(0, 0, 15);
 	}
 	if (viewMode == "cube")
 	{
@@ -543,7 +553,7 @@ int main()
 
 	if (viewMode == "sphere")
 	{
-		Sphere sphere0(vec3(0.00f, 0.00f, 0.00f), 1.0f, vec3(1.0f, 1.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.15f, 0.05f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
+		Sphere sphere0(vec3(0.00f, 0.00f, 0.00f), 1.0f, vec3(1.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.15f, 0.05f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		Sphere sphere1(vec3(-3.00f, 0.00f, 0.00f), 1.0f, vec3(0.00f, 0.5, 0.5), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		Sphere sphere2(vec3(3.00f, 0.00f, 0.00f), 1.00f, vec3(0.0f, 1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
 		Sphere sphere3(vec3(0.00f, 0.00f, -1.50f), 1.00f, vec3(0.0f, 1.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, 0.0f), 10.0f, vec3(0.1, 0.1, 0.1));
@@ -571,8 +581,8 @@ int main()
 	//	scene.dirLights.push_back(lightDir2);
 
 		float triWidth = 10.0f;
-		float triHeight = 7.00f;
-		float triDepth = 10.0f;
+		float triHeight = 10.00f;
+		float triDepth = 20.0f;
 		float triCenter = 0.00f;
 
 		vec3 vert0(-triWidth , -triHeight , -triDepth );
@@ -629,8 +639,8 @@ int main()
 		scene.triangles.push_back(tri6);
 		scene.triangles.push_back(tri7);
 		// -Z
-	//	scene.triangles.push_back(tri8);
-	//	scene.triangles.push_back(tri9);
+		scene.triangles.push_back(tri8);
+		scene.triangles.push_back(tri9);
 
 		// +Z
 	//	scene.triangles.push_back(tri10);
@@ -658,14 +668,14 @@ int main()
 			// TODO, check when this code executes
 			if (dot(ray.direction, intersection.hitObjectNormal) > 0)
 			{
-				tempNormal = -tempNormal;
+			//	tempNormal = -tempNormal;
 			}
 
 		//	tempNormal.x = 1;
 		//	tempNormal.y = -1;
 		//	tempNormal.z = 1;
 			Ray tempRay(ray.origin, ray.direction);
-		//	tempRay.direction = normalize(tempRay.direction);
+			tempRay.direction = normalize(tempRay.direction);
 			if (intersection.didHit)
 			{
 			//	mirrorRay.direction = normalize(normalize(tempRay.direction) - (2.0f * dot(normalize(tempRay.direction), tempNormal) * tempNormal));
@@ -674,6 +684,7 @@ int main()
 				mirrorRay.direction.z = tempRay.direction.z - (2.0f * dot(tempRay.direction.z, tempNormal.z) * tempNormal.z);
 			//	mirrorRay.direction.x = 1;
 			//	mirrorRay.direction.y = 1;
+			//	mirrorRay.direction.y = -mirrorRay.direction.y;
 			//	mirrorRay.direction.z = 0;
 				// TODO this section
 			//	mirrorRay.direction.z = -mirrorRay.direction.z;
