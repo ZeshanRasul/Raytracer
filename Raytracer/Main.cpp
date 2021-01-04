@@ -194,9 +194,9 @@ vec3 CheckTriangleIntersection(Triangle triangle, Ray ray, Camera camera)
 
 	vec3 q = ray.origin + (t * ray.direction);
 	
-	triangle.vertex0 = lookAt(camera.eyePos, camera.center, camera.up) * triangle.vertex0;
-	triangle.vertex1 = lookAt(camera.eyePos, camera.center, camera.up) * triangle.vertex1;
-	triangle.vertex2 = lookAt(camera.eyePos, camera.center, camera.up) * triangle.vertex2;
+//	triangle.vertex0 = lookAt(camera.eyePos, camera.center, camera.up) * triangle.vertex0;
+//	triangle.vertex1 = lookAt(camera.eyePos, camera.center, camera.up) * triangle.vertex1;
+//	triangle.vertex2 = lookAt(camera.eyePos, camera.center, camera.up) * triangle.vertex2;
 
 	vec3 triVert0 = vec3(triangle.vertex0.x, triangle.vertex0.y, triangle.vertex0.z);
 	vec3 triVert1 = vec3(triangle.vertex1.x, triangle.vertex1.y, triangle.vertex1.z);
@@ -713,6 +713,8 @@ int main()
 			//	mirrorRay.direction = -mirrorRay.direction;
 			}
 		//	ray.direction.y = -ray.direction.y;
+			Ray tempRay; 
+			tempRay.origin = lookAt(camera.eyePos, camera.center, camera.up) * vec4(ray.origin);
 			mirrorRay.direction = normalize(normalize(ray.direction) - (2.0f * dot(normalize(ray.direction), tempNormal) * tempNormal));
 			if (intersection.didHit == true)
 			{
